@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="bioimportejb">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/bioimportejb</jta-data-source>
+		<class>br.com.bioimportejb.entidades.AbioticAnalysi</class>
+		<class>br.com.bioimportejb.entidades.Area</class>
+		<class>br.com.bioimportejb.entidades.Ator</class>
+		<class>br.com.bioimportejb.entidades.BenthicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.BioticAnalysi</class>
+		<class>br.com.bioimportejb.entidades.FishAssemblyAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysiPK</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeTaxonomicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeTaxonomicAnalysiPK</class>
+		<class>br.com.bioimportejb.entidades.MetagenomicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.ReferenceDb</class>
+		<class>br.com.bioimportejb.entidades.Sample</class>
+		<class>br.com.bioimportejb.entidades.SampleType</class>
+		<class>br.com.bioimportejb.entidades.Taxon</class>
+		<properties>
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false" />
+			
+		</properties>
+		
+		
+		
+	</persistence-unit>
+</persistence>
