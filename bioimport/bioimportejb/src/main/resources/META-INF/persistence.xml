@@ -18,6 +18,17 @@
 		<class>br.com.bioimportejb.entidades.Sample</class>
 		<class>br.com.bioimportejb.entidades.SampleType</class>
 		<class>br.com.bioimportejb.entidades.Taxon</class>
+		<class>model.Amostra</class>
+		<class>model.Analise</class>
+		<class>model.AnaliseBio</class>
+		<class>model.Configuracao</class>
+		<class>model.DadosGerai</class>
+		<class>model.DadosTaxon</class>
+		<class>model.Descritor</class>
+		<class>model.DescritorUnidade</class>
+		<class>model.Taxon</class>
+		<class>model.UnidadeMedida</class>
+		<class>model.Usuario</class>
 		<properties>
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
