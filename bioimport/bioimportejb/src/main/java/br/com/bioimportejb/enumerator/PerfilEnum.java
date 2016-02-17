@@ -3,12 +3,7 @@ package br.com.bioimportejb.enumerator;
 
 public enum PerfilEnum {
 	
-	SUPER_AD("SAD", "Coordenador Geral"),
-	AD("AD", "Gestor - NGQ"),
-	CHE("CHE", "Respons�vel de �rea"),
-	ESP("ESP", "T�cnico"),
-	RQ("RQ", "Representante do Respons�vel de �rea"),
-	RD("RD", "Representante da Dire��o");
+	AD("AD", "Administrador");
 	
 	
 	private PerfilEnum(String sigla, String descricao) {

@@ -10,10 +10,11 @@
  	<global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
 	<http auto-config="true" use-expressions="true">
 	
+	<!--  
 		<intercept-url pattern="/ator/cadastroAtor**" access="hasAnyRole('ROLE_USER')" />
 		<intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/ator/**" access="isAuthenticated()"  />
-		
+	-->	
 		<access-denied-handler  error-page="/acessoNegado.jsf"/>
 		<form-login login-page="/index.jsf" />
 		

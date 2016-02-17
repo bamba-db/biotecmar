@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-import br.com.bioimportejb.entidades.Ator;
+import br.com.bioimportejb.entidades.Usuario;
 
 public class Autenticacao implements Authentication{
 private static final long serialVersionUID = -448422158890048086L;
@@ -15,7 +15,7 @@ private static final long serialVersionUID = -448422158890048086L;
 	private boolean authenticated = false;
 	private GrantedAuthority grantedAuthority;
 	private Authentication authentication;
-	private Ator ator;
+	private Usuario ator;
 	
 	public Autenticacao(){
 		
@@ -64,11 +64,11 @@ private static final long serialVersionUID = -448422158890048086L;
 		this.grantedAuthority = grantedAuthority;
 	}
 
-	public Ator getAtor() {
+	public Usuario getAtor() {
 		return ator;
 	}
 
-	public void setAtor(Ator ator) {
+	public void setAtor(Usuario ator) {
 		this.ator = ator;
 	}	
 	

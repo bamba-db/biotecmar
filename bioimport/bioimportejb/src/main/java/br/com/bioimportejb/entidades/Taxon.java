@@ -1,8 +1,20 @@
 package br.com.bioimportejb.entidades;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 
 /**
@@ -10,41 +22,32 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="biotecmar.taxon")
+@Table(name="taxon", schema="bio")
+@NamedQuery(name="Taxon.findAll", query="SELECT t FROM Taxon t")
 public class Taxon implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id 
-	@SequenceGenerator(name="pk_taxon_sequence",sequenceName="biotecmar.taxon_id_taxon_seq", allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="pk_taxon_sequence")
-	@Column(name="id_taxon", unique=true, nullable=false)
+	@Id
+	@SequenceGenerator(name="seq_taxon",sequenceName="bio.seq_taxon", allocationSize=1)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_taxon")
+	@Column(name="id_taxon")
 	private Long idTaxon;
 
-	@Column(name="class")
-	private String class_;
+	private String nome;
 
-	private String family;
-
-	private String genus;
-
-	private String infraspecificepithet;
-
-	private String kingdom;
-
-	@Column(name="ord")
-	private String order;
-
-	private String phylum;
-
-	private String scientificname;
-
-	private String species;
-
-	private String taxonrank;
-
-	//bi-directional many-to-one association to FishAssemblyAnalysi
+	//bi-directional many-to-one association to AnaliseBio
 	@OneToMany(mappedBy="taxon")
-	private List<FishAssemblyAnalysi> fishAssemblyAnalysis;
+	private List<AnaliseBio> analiseBios;
+
+	//bi-directional many-to-one association to DadosTaxon
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="taxonkey")
+	private DadosTaxon dadosTaxon;
+
+	//bi-directional many-to-one association to Usuario
+	@ManyToOne
+	@JoinColumn(name="id_usuario")
+	private Usuario usuario;
 
 	public Taxon() {
 	}
@@ -57,92 +60,50 @@ public class Taxon implements Serializable {
 		this.idTaxon = idTaxon;
 	}
 
-	public String getClass_() {
-		return this.class_;
+	public String getNome() {
+		return this.nome;
 	}
 
-	public void setClass_(String class_) {
-		this.class_ = class_;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public String getFamily() {
-		return this.family;
+	public List<AnaliseBio> getAnaliseBios() {
+		return this.analiseBios;
 	}
 
-	public void setFamily(String family) {
-		this.family = family;
+	public void setAnaliseBios(List<AnaliseBio> analiseBios) {
+		this.analiseBios = analiseBios;
 	}
 
-	public String getGenus() {
-		return this.genus;
+	public AnaliseBio addAnaliseBio(AnaliseBio analiseBio) {
+		getAnaliseBios().add(analiseBio);
+		analiseBio.setTaxon(this);
+
+		return analiseBio;
 	}
 
-	public void setGenus(String genus) {
-		this.genus = genus;
+	public AnaliseBio removeAnaliseBio(AnaliseBio analiseBio) {
+		getAnaliseBios().remove(analiseBio);
+		analiseBio.setTaxon(null);
+
+		return analiseBio;
 	}
 
-	public String getInfraspecificepithet() {
-		return this.infraspecificepithet;
+	public DadosTaxon getDadosTaxon() {
+		return this.dadosTaxon;
 	}
 
-	public void setInfraspecificepithet(String infraspecificepithet) {
-		this.infraspecificepithet = infraspecificepithet;
+	public void setDadosTaxon(DadosTaxon dadosTaxon) {
+		this.dadosTaxon = dadosTaxon;
 	}
 
-	public String getKingdom() {
-		return this.kingdom;
+	public Usuario getUsuario() {
+		return this.usuario;
 	}
 
-	public void setKingdom(String kingdom) {
-		this.kingdom = kingdom;
-	}
-
-	public String getOrder() {
-		return this.order;
-	}
-
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
-	public String getPhylum() {
-		return this.phylum;
-	}
-
-	public void setPhylum(String phylum) {
-		this.phylum = phylum;
-	}
-
-	public String getScientificname() {
-		return this.scientificname;
-	}
-
-	public void setScientificname(String scientificname) {
-		this.scientificname = scientificname;
-	}
-
-	public String getSpecies() {
-		return this.species;
-	}
-
-	public void setSpecies(String species) {
-		this.species = species;
-	}
-
-	public String getTaxonrank() {
-		return this.taxonrank;
-	}
-
-	public void setTaxonrank(String taxonrank) {
-		this.taxonrank = taxonrank;
-	}
-
-	public List<FishAssemblyAnalysi> getFishAssemblyAnalysis() {
-		return this.fishAssemblyAnalysis;
-	}
-
-	public void setFishAssemblyAnalysis(List<FishAssemblyAnalysi> fishAssemblyAnalysis) {
-		this.fishAssemblyAnalysis = fishAssemblyAnalysis;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

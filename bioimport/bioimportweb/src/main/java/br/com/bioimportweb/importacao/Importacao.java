@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,12 +21,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
-import br.com.bioimportejb.entidades.Sample;
+import com.opencsv.CSVReader;
+
+import br.com.bioimportejb.entidades.Amostra;
+import br.com.bioimportejb.entidades.Analise;
+import br.com.bioimportejb.entidades.AnaliseBio;
+import br.com.bioimportejb.entidades.DadosTaxon;
 import br.com.bioimportejb.entidades.Taxon;
 import br.com.bioimportejb.util.ChaveSampleVO;
-
-import com.opencsv.CSVReader;
+import br.com.bioimportweb.util.Util;
 
 public class Importacao implements Serializable {
 
@@ -75,17 +79,19 @@ public class Importacao implements Serializable {
 	
 
 	private Logger log = LoggerFactory.getLogger(getClass());
-	public Collection<Sample> lerCsv(InputStream inputStream) {
-		Map<ChaveSampleVO, Sample> samples = new HashMap<ChaveSampleVO, Sample>(); 
+	public Collection<Amostra> lerCsv(InputStream inputStream) {
+		Map<ChaveSampleVO, Amostra> samples = new HashMap<ChaveSampleVO, Amostra>(); 
 		try {
 			 CSVReader reader = new CSVReader(new InputStreamReader(inputStream), '\t');
 			 String [] linha;
 			 
 			 int count = 0;
-			 
+			 Map<Long, DadosTaxon> dadosTaxon = new HashMap<Long, DadosTaxon>();
 			 while ((linha = reader.readNext()) != null) {
 				if(count != 0) {
-					Sample sample = new Sample();
+					Amostra sample = new Amostra();
+					sample.setDtInclusao(Calendar.getInstance().getTime());
+					sample.setUsuario(Util.pegarAtor());
 					ChaveSampleVO chave = new ChaveSampleVO();
 					int tamanhoLinha = linha.length;
 					BigDecimal latitude = null;
@@ -106,7 +112,7 @@ public class Importacao implements Serializable {
 							String depthString = linha[DEPTH];
 							if(depthString != null && !"".equals(depthString)) {
 								BigDecimal depth = new BigDecimal(depthString);
-								sample.setDepth(depth);
+								sample.setProfundidade(depth);
 								chave.setDepth(depth);
 							}
 						} catch (Exception e) {
@@ -115,60 +121,90 @@ public class Importacao implements Serializable {
 					}
 					
 					Date data = dataCsv(linha);
-					sample.setDt(data);
+					sample.setDtAmostra(data);
 					chave.setData(data);
 					
-					Sample aux = samples.get(chave);
+					Amostra aux = samples.get(chave);
 					if(aux != null) {
 						sample = aux;
 					}
-					FishAssemblyAnalysi f = new FishAssemblyAnalysi();
+					Analise f = new Analise();
+					f.setUsuario(Util.pegarAtor());
+			    	f.setDtAnalise(Calendar.getInstance().getTime());
 			    	
-			    	if(f.getTaxon() == null) {
-						f.setTaxon(new Taxon());
+			    	if(f.getAnaliseBio() == null) {
+			    		AnaliseBio analiseBio = new AnaliseBio();
+			    		analiseBio.setUsuario(Util.pegarAtor());
+			    		analiseBio.setDtInclusao(Calendar.getInstance().getTime());
+						f.setAnaliseBio(analiseBio);
+						Taxon taxon = new Taxon();
+						taxon.setUsuario(Util.pegarAtor());
+						f.getAnaliseBio().setTaxon(taxon);
+						f.getAnaliseBio().setAnalise(f);
+						
 					}
 			    	
+			    	/**
+			    	 * Sistema recupera o taxonkey da linha corrente
+			    	 * E verifica se já recuperou algum dado taxonômico com o mesmo taxonkey
+			    	 * Caso já exista recupera do Map, caso não cria um novo para sua persistência.
+			    	 */
+			    	Long taxonkey = null;
+			    	if(TAXONKEY < tamanhoLinha) {
+			    		taxonkey = Long.valueOf(linha[TAXONKEY]);
+			    	}
+			    	
+			    	DadosTaxon dTaxon = dadosTaxon.get(taxonkey);
+			    	
+			    	if(dTaxon == null) {
+			    		dTaxon = new DadosTaxon();
+			    		dTaxon.setTaxonkey(taxonkey);
+			    	}
+			    	
 					if(KINGDOM < tamanhoLinha) {
-			    		f.getTaxon().setKingdom(linha[KINGDOM]);
+			    		dTaxon.setKingdom(linha[KINGDOM]);
 			    	}
 			    	
 			    	if(PHYLUM < tamanhoLinha) {
-			    		f.getTaxon().setPhylum(linha[PHYLUM]);
+			    		dTaxon.setPhylum(linha[PHYLUM]);
 			    	}
 			    	
 			    	if(CLASS < tamanhoLinha) {
-			    		f.getTaxon().setClass_(linha[CLASS]);
+			    		dTaxon.setClass_(linha[CLASS]);
 			    	}
 			    	
 			    	if(ORDER < tamanhoLinha) {
-			    		f.getTaxon().setOrder(linha[ORDER]);
+			    		dTaxon.setOrd(linha[ORDER]);
 			    	}
 			    	
 			    	if(FAMILY < tamanhoLinha) {
-			    		f.getTaxon().setFamily(linha[FAMILY]);
+			    		dTaxon.setFamily(linha[FAMILY]);
 			    	}
 			    	
 			    	if(GENUS < tamanhoLinha) {
-			    		f.getTaxon().setGenus(linha[GENUS]);
+			    		dTaxon.setGenus(linha[GENUS]);
 			    	}
 			    	
 			    	if(SPECIES < tamanhoLinha) {
-			    		f.getTaxon().setSpecies(linha[SPECIES]);
+			    		dTaxon.setSpecies(linha[SPECIES]);
 			    	}
 			    	
 			    	if(INFRASPECIFICEPITHET < tamanhoLinha) {
-			    		f.getTaxon().setInfraspecificepithet(linha[INFRASPECIFICEPITHET]);
+			    		dTaxon.setInfraspecificepithet(linha[INFRASPECIFICEPITHET]);
 			    	}
 			    	
 			    	if(TAXONRANK < tamanhoLinha) {
-			    		f.getTaxon().setTaxonrank(linha[TAXONRANK]);
+			    		dTaxon.setTaxonrank(linha[TAXONRANK]);
 			    	}
 			    	
 			    	if(SCIENTIFICNAME < tamanhoLinha) {
-			    		f.getTaxon().setScientificname(linha[SCIENTIFICNAME]);
+			    		dTaxon.setScientifcname(linha[SCIENTIFICNAME]);
 			    	}
 			    	
-			    	sample.addFishAssemblyAnalysi(f);
+			    	f.getAnaliseBio().getTaxon().setDadosTaxon(dTaxon);
+			    	dadosTaxon.put(dTaxon.getTaxonkey(), dTaxon);
+			    	
+			    	sample.addAnalis(f);
 			    	samples.put(chave, sample);
 				}
 				count ++;
@@ -193,9 +229,9 @@ public class Importacao implements Serializable {
 	
 	public static void main(String ...args) {
 		Importacao i = new Importacao();
-		List<Sample> lista = null;
+		List<Amostra> lista = null;
 		try {
-			lista = new ArrayList<Sample>();
+			lista = new ArrayList<Amostra>();
 			lista.addAll(i.lerCsv(new FileInputStream(new File("C:\\Workspaces\\BiotecMar\\0012051-151016162008034\\0012051-151016162008034.csv"))));
 			
 		} catch (FileNotFoundException e) {

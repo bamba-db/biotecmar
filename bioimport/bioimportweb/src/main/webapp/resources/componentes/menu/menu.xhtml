@@ -6,7 +6,7 @@
 >
 
 <cc:interface>
-	<cc:attribute name="usuario" type="br.com.bioimportejb.entidades.Ator"/>
+	<cc:attribute name="usuario" type="br.com.bioimportejb.entidades.Usuario"/>
 	
 </cc:interface>
 
@@ -32,8 +32,8 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastro<span class="caret"></span></a>
               <ul class="dropdown-menu">
           		<li><p:commandLink value="Cadastro usuário" action="/ator/cadastroAtor.jsf?faces-redirect=true"/></li>
-          		<li><p:commandLink value="Alterar senha" action="alterarSenha" global="false" process="@this" onclick="PF('redirecionarPagina').show()" /> </li>
-          		<li><p:commandLink value="Editar meus dados" action="cadastrarAtor" global="false" process="@this" onclick="PF('redirecionarPagina').show()" /></li>    
+          		<li><p:commandLink value="Alterar senha" action="/ator/cadastroAtor.jsf?faces-redirect=true" global="false" process="@this" onclick="PF('redirecionarPagina').show()" /> </li>
+          		<li><p:commandLink value="Editar meus dados" action="/ator/cadastroAtor.jsf?faces-redirect=true" global="false" process="@this" onclick="PF('redirecionarPagina').show()" /></li>    
               </ul>
               
             </li>

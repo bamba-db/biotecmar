@@ -9,12 +9,12 @@ import javax.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import br.com.bioimportejb.entidades.Ator;
+import br.com.bioimportejb.entidades.Usuario;
 import br.com.bioimportweb.autenticacao.Autenticacao;
 
 public class Util {
 	
-	public static Ator pegarAtor() {
+	public static Usuario pegarAtor() {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();  
 	        if(authentication instanceof Autenticacao){
 	        	Autenticacao autenticacao = (Autenticacao) authentication;

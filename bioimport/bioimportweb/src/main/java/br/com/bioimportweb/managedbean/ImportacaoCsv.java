@@ -15,8 +15,8 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.bioimportejb.bean.SampleBean;
-import br.com.bioimportejb.entidades.Sample;
+import br.com.bioimportejb.bean.AmostraBean;
+import br.com.bioimportejb.entidades.Amostra;
 import br.com.bioimportweb.importacao.Importacao;
 import br.com.bioimportweb.util.Util;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
@@ -34,8 +34,8 @@ public class ImportacaoCsv implements Serializable {
  
 	private Logger log = LoggerFactory.getLogger(getClass());
 	@EJB
-	private SampleBean sampleBean;
-	private List<Sample> listaSamples;
+	private AmostraBean sampleBean;
+	private List<Amostra> listaSamples;
 	
     public UploadedFile getFile() {
         return file;
@@ -56,7 +56,7 @@ public class ImportacaoCsv implements Serializable {
     public void importar() {
     	Importacao importacao = new Importacao();
     	try {
-			listaSamples = new ArrayList<Sample>(); 
+			listaSamples = new ArrayList<Amostra>(); 
 			listaSamples.addAll(importacao.lerCsv(getFile().getInputstream()));
 			listaSamples = sampleBean.salvar(listaSamples);
 		} catch (IOException e) {
@@ -76,11 +76,11 @@ public class ImportacaoCsv implements Serializable {
 		this.arquivo = arquivo;
 	}
 
-	public List<Sample> getListaSamples() {
+	public List<Amostra> getListaSamples() {
 		return listaSamples;
 	}
 
-	public void setListaSamples(List<Sample> listaSamples) {
+	public void setListaSamples(List<Amostra> listaSamples) {
 		this.listaSamples = listaSamples;
 	}
 	

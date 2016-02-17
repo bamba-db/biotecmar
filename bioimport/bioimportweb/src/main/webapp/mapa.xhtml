@@ -21,45 +21,45 @@
 		</div>
 		
 		<p:dialog closable="true" id="detalhes" widgetVar="detalhesVar" width="300" height="300" draggable="false" resizable="false" position="center, 200" styleClass="dialogDetalhes">
-			<ui:repeat var="fishSelecionado" value="#{mapaMB.fishes}" >
+			<ui:repeat var="analise" value="#{mapaMB.fishes}" >
 			
 				<p:outputLabel value="Família: "/>
-				<h:outputText value="#{fishSelecionado.taxon.family}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.family}" />
 				<br/>
 	
 				<p:outputLabel value="Gênero: "/>
-				<h:outputText value="#{fishSelecionado.taxon.genus}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.genus}" />
 				<br/>
 				
 				<p:outputLabel value="Reino: " />
-				<h:outputText value="#{fishSelecionado.taxon.kingdom}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.kingdom}" />
 				<br/>
 				
 				<p:outputLabel value="Ordem: "/>
-				<h:outputText value="#{fishSelecionado.taxon.order}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.ord}" />
 				<br/>
 				
 				<p:outputLabel value="Filo: "/>
-				<h:outputText value="#{fishSelecionado.taxon.phylum}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.phylum}" />
 				<br/>
 				
 				<p:outputLabel value="Nome Científico: " />
-				<h:outputText value="#{fishSelecionado.taxon.scientificname}" />
-				<br/>
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.scientifcname}" />
+				<br/>													   	
 				
 				<p:outputLabel value="Espécie: "/>
-				<h:outputText value="#{fishSelecionado.taxon.species}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.species}" />
 				<br/>
 				
 				<p:outputLabel value="Taxon Rank: "/>
-				<h:outputText value="#{fishSelecionado.taxon.taxonrank}" />
+				<h:outputText value="#{analise.analiseBio.taxon.dadosTaxon.taxonrank}" />
 				<br/>
 				<p:separator/>
 				
 			</ui:repeat>
 		</p:dialog>
 		
-		<p:remoteCommand name="detalhar" action="#{mapaMB.converterJsonParaFish()}" oncomplete="PF('detalhesVar').show();" update="detalhes"/>
+		<p:remoteCommand name="detalhar" actionListener="#{mapaMB.converterJsonParaFish()}" oncomplete="PF('detalhesVar').show();" update="detalhes"/>
 		<script type="text/javascript">
 			
 		//<![CDATA[

@@ -1,6 +1,5 @@
 package br.com.bioimportweb.managedbean;
 
-import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -14,17 +13,14 @@ import javax.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import antlr.Utils;
-import br.com.bioimportejb.bean.SampleBean;
-import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
-import br.com.bioimportejb.entidades.Sample;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import br.com.bioimportejb.bean.AmostraBean;
+import br.com.bioimportejb.entidades.Amostra;
+import br.com.bioimportejb.entidades.Analise;
 import br.com.bioimportweb.util.Util;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @ViewScoped
 @ManagedBean(name="mapaMB")
@@ -35,16 +31,16 @@ public class MapaMB implements Serializable {
 	 */
 	private static final long serialVersionUID = -5904601591548693570L;
 
-	private List<Sample> samples;
+	private List<Amostra> samples;
 	
 	@EJB
-	private SampleBean sampleBean;
+	private AmostraBean sampleBean;
 	
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private JsonArray listaJson;
 	
-	private List<FishAssemblyAnalysi> fishes;
+	private List<Analise> fishes;
 	
 	public JsonArray getListaJson() {
 		return listaJson;
@@ -57,27 +53,27 @@ public class MapaMB implements Serializable {
 	@PostConstruct
 	private void iniciar() {
 		try {
-			setSamples(sampleBean.listarSamples());
+			setSamples(sampleBean.listarAmostras());
 			listaJson = new JsonArray();
-			for(Sample s : samples) {
+			for(Amostra s : samples) {
 				JsonObject j = new JsonObject();
 				j.addProperty("index", samples.indexOf(s));
 				j.addProperty("latitude", s.getLatitude());
 				j.addProperty("longitude", s.getLongitude());
-				j.addProperty("depth", s.getDepth());
+				j.addProperty("depth", s.getProfundidade());
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-				j.addProperty("data", sdf.format(s.getDt()));
+				j.addProperty("data", sdf.format(s.getDtAmostra()));
 				JsonArray array = new JsonArray();
-				for(FishAssemblyAnalysi f: s.getFishAssemblyAnalysi()) {
+				for(Analise f: s.getAnalises()) {
 					JsonObject fo = new JsonObject();
-					fo.addProperty("family", f.getTaxon().getFamily());
-					fo.addProperty("genus", f.getTaxon().getGenus());
-					fo.addProperty("kingdom", f.getTaxon().getKingdom());
-					fo.addProperty("order", f.getTaxon().getOrder());
-					fo.addProperty("phylum", f.getTaxon().getPhylum());
-					fo.addProperty("scientificname", f.getTaxon().getScientificname());
-					fo.addProperty("species", f.getTaxon().getSpecies());
-					fo.addProperty("taxonrank", f.getTaxon().getTaxonrank());
+					fo.addProperty("family", f.getAnaliseBio().getTaxon().getDadosTaxon().getFamily());
+					fo.addProperty("genus", f.getAnaliseBio().getTaxon().getDadosTaxon().getGenus());
+					fo.addProperty("kingdom", f.getAnaliseBio().getTaxon().getDadosTaxon().getKingdom());
+					fo.addProperty("order", f.getAnaliseBio().getTaxon().getDadosTaxon().getOrd());
+					fo.addProperty("phylum", f.getAnaliseBio().getTaxon().getDadosTaxon().getPhylum());
+					fo.addProperty("scientificname", f.getAnaliseBio().getTaxon().getDadosTaxon().getScientifcname());
+					fo.addProperty("species", f.getAnaliseBio().getTaxon().getDadosTaxon().getSpecies());
+					fo.addProperty("taxonrank", f.getAnaliseBio().getTaxon().getDadosTaxon().getTaxonrank());
 					array.add(fo);	
 				}
 				j.add("fishes", array);
@@ -94,24 +90,24 @@ public class MapaMB implements Serializable {
 	public void converterJsonParaFish() {
 		String index = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("index");
 		if (index != null && !"".equals(index)) {
-			Sample sample = samples.get(Integer.valueOf(index));
-			fishes = sample.getFishAssemblyAnalysi();
+			Amostra sample = samples.get(Integer.valueOf(index));
+			fishes = sample.getAnalises();
 		}
 	}
 
-	public List<Sample> getSamples() {
+	public List<Amostra> getSamples() {
 		return samples;
 	}
 
-	public void setSamples(List<Sample> samples) {
+	public void setSamples(List<Amostra> samples) {
 		this.samples = samples;
 	}
 	
-	public List<FishAssemblyAnalysi> getFishes() {
+	public List<Analise> getFishes() {
 		return fishes;
 	}
 
-	public void setFishes(List<FishAssemblyAnalysi> fishes) {
+	public void setFishes(List<Analise> fishes) {
 		this.fishes = fishes;
 	}
 	

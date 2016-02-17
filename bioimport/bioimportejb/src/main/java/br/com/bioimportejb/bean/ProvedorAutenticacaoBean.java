@@ -9,8 +9,8 @@ import javax.persistence.PersistenceContext;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 import br.com.daofabrica.fabrica.DAOFabrica;
 import br.com.daofabrica.fabrica.DAOFabricaImpl;
-import br.com.bioimportejb.dao.AtorDAO;
-import br.com.bioimportejb.entidades.Ator;
+import br.com.bioimportejb.dao.UsuarioDAO;
+import br.com.bioimportejb.entidades.Usuario;
 import br.com.bioimportejb.service.ProvedorAutenticacaoService;
 
 @Stateless
@@ -23,14 +23,14 @@ public class ProvedorAutenticacaoBean implements ProvedorAutenticacaoService, Se
 	
 	private DAOFabrica daoFabrica;
 	
-	public AtorDAO getAtorDAO(EntityManager em) throws ExcecaoGenerica{
+	public UsuarioDAO getUsuarioDAO(EntityManager em) throws ExcecaoGenerica{
 		daoFabrica = new DAOFabricaImpl(em);
-		return (AtorDAO) daoFabrica.getDAO(Ator.class);
+		return (UsuarioDAO) daoFabrica.getDAO(Usuario.class);
 	}
 
 	@Override
-	public Ator buscarAtorPorLoginESenha(String login, String senha) throws ExcecaoGenerica {
-		Ator ator = getAtorDAO(em).buscarAtorPorLoginESenha(login, senha);
+	public Usuario buscarUsuarioPorLoginESenha(String login, String senha) throws ExcecaoGenerica {
+		Usuario ator = getUsuarioDAO(em).buscarUsuarioPorLoginESenha(login, senha);
 		
 		return ator;
 	}
