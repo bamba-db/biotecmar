@@ -96,6 +96,10 @@ public class Util {
 	    return FacesContext.getCurrentInstance().isPostback();
 	}
 	
+	public static void validationFailed() {
+	    FacesContext.getCurrentInstance().validationFailed();
+	}
+	
 	public static HttpServletRequest getRequest() {
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		return request;

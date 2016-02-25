@@ -20,6 +20,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -32,6 +34,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 @Entity
 @Table(name="amostra", schema="bio")
 @NamedQuery(name="Amostra.findAll", query="SELECT a FROM Amostra a")
+@XmlRootElement
 public class Amostra implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -63,6 +66,7 @@ public class Amostra implements Serializable {
 	//bi-directional many-to-one association to Analise
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany(mappedBy="amostra", cascade=CascadeType.ALL)
+	@XmlTransient
 	private List<Analise> analises = new ArrayList<Analise>();
 
 	public Amostra() {
@@ -124,6 +128,7 @@ public class Amostra implements Serializable {
 		this.usuario = usuario;
 	}
 
+	@XmlTransient
 	public List<Analise> getAnalises() {
 		return this.analises;
 	}

@@ -13,6 +13,7 @@ import br.com.bioimportejb.dao.AmostraDAO;
 import br.com.bioimportejb.entidades.Amostra;
 import br.com.bioimportejb.entidades.Analise;
 import br.com.bioimportejb.entidades.Taxon;
+import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 import br.com.daofabrica.fabrica.DAOFabrica;
 import br.com.daofabrica.fabrica.DAOFabricaImpl;
@@ -41,18 +42,22 @@ public class AmostraBean implements Serializable {
 		for(Amostra a : lista) {
 			for(Analise f: a.getAnalises()) {
 				f.setAmostra(a);
-				for(Taxon t : f.getAnaliseBio().getTaxon().getDadosTaxon().getTaxons()) {
-					t.setDadosTaxon(f.getAnaliseBio().getTaxon().getDadosTaxon());
-					
-				}
 			}
-			samplesGravados.add(getAmostraDAO().salvar(a));
+			samplesGravados.add(getAmostraDAO().mesclar(a));
 		}
 		return samplesGravados;
 	}
 
 	public List<Amostra> listarAmostras() throws ExcecaoGenerica {
 		return getAmostraDAO().listarAscOuDesc("dtAmostra", true);
+	}
+
+	public Amostra buscarPorId(Long id) throws ExcecaoIntegracao {
+		try {
+			return getAmostraDAO().buscarPorId(id);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
 	}
 
 	

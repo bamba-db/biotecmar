@@ -171,6 +171,13 @@
 			<version>20151123</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.0.16.Final</version>
+			<scope>provided</scope>
+		</dependency>
+				
 				
     </dependencies>
  

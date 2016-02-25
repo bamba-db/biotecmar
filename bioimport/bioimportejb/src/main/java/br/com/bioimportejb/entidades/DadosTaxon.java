@@ -49,10 +49,7 @@ public class DadosTaxon implements Serializable {
 
 	private String taxonrank;
 
-	//bi-directional many-to-one association to Taxon
-	@OneToMany(mappedBy="dadosTaxon")
-	private List<Taxon> taxons = new ArrayList<Taxon>();
-
+	
 	public DadosTaxon() {
 	}
 
@@ -144,26 +141,5 @@ public class DadosTaxon implements Serializable {
 		this.taxonrank = taxonrank;
 	}
 
-	public List<Taxon> getTaxons() {
-		return this.taxons;
-	}
-
-	public void setTaxons(List<Taxon> taxons) {
-		this.taxons = taxons;
-	}
-
-	public Taxon addTaxon(Taxon taxon) {
-		getTaxons().add(taxon);
-		taxon.setDadosTaxon(this);
-
-		return taxon;
-	}
-
-	public Taxon removeTaxon(Taxon taxon) {
-		getTaxons().remove(taxon);
-		taxon.setDadosTaxon(null);
-
-		return taxon;
-	}
-
+	
 }
