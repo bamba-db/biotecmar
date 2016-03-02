@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -21,8 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -66,7 +67,7 @@ public class Amostra implements Serializable {
 	//bi-directional many-to-one association to Analise
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany(mappedBy="amostra", cascade=CascadeType.ALL)
-	@XmlTransient
+	@XmlInverseReference(mappedBy="amostra")
 	private List<Analise> analises = new ArrayList<Analise>();
 
 	public Amostra() {
@@ -128,7 +129,6 @@ public class Amostra implements Serializable {
 		this.usuario = usuario;
 	}
 
-	@XmlTransient
 	public List<Analise> getAnalises() {
 		return this.analises;
 	}

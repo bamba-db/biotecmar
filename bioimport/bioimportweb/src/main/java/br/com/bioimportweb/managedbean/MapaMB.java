@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import br.com.bioimportejb.bean.AmostraBean;
 import br.com.bioimportejb.entidades.Amostra;
 import br.com.bioimportejb.entidades.Analise;
+import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.bioimportweb.util.Util;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 
@@ -81,7 +82,7 @@ public class MapaMB implements Serializable {
 				listaJson.add(j);
 			}
 			
-		} catch (ExcecaoGenerica e) {
+		} catch (ExcecaoIntegracao e) {
 			log.error(e.getMessage(), e);
 			Util.montaMensagemErroSemFlashRedirect("Erro ao carregar lista de registros", "");
 		}

@@ -48,8 +48,12 @@ public class AmostraBean implements Serializable {
 		return samplesGravados;
 	}
 
-	public List<Amostra> listarAmostras() throws ExcecaoGenerica {
-		return getAmostraDAO().listarAscOuDesc("dtAmostra", true);
+	public List<Amostra> listarAmostras() throws ExcecaoIntegracao {
+		try {
+			return getAmostraDAO().listarAscOuDesc("dtAmostra", true);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
 	}
 
 	public Amostra buscarPorId(Long id) throws ExcecaoIntegracao {

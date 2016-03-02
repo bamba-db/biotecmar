@@ -19,12 +19,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 
 /**
  * The persistent class for the analise database table.
  * 
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name="analise", schema="bio")
 @NamedQuery(name="Analise.findAll", query="SELECT a FROM Analise a")
@@ -44,6 +50,7 @@ public class Analise implements Serializable {
 	//bi-directional many-to-one association to Amostra
 	@ManyToOne
 	@JoinColumn(name="id_amostra")
+	@XmlTransient
 	private Amostra amostra;
 
 	//bi-directional many-to-one association to Usuario
@@ -53,10 +60,12 @@ public class Analise implements Serializable {
 
 	//bi-directional many-to-one association to AnaliseBio
 	@OneToOne(mappedBy="analise", cascade=CascadeType.ALL)
+	@XmlInverseReference(mappedBy="analise")
 	private AnaliseBio analiseBio;
 
 	//bi-directional many-to-one association to DadosGerai
 	@OneToMany(mappedBy="analise")
+	@XmlTransient
 	private List<DadosGerai> dadosGerais;
 
 	public Analise() {
@@ -78,6 +87,7 @@ public class Analise implements Serializable {
 		this.dtAnalise = dtAnalise;
 	}
 
+	//@XmlInverseReference(mappedBy="analises")
 	public Amostra getAmostra() {
 		return this.amostra;
 	}

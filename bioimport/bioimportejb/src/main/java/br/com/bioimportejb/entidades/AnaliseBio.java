@@ -17,12 +17,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
  * The persistent class for the analise_bio database table.
  * 
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name="analise_bio", schema="bio")
 @NamedQuery(name="AnaliseBio.findAll", query="SELECT a FROM AnaliseBio a")
@@ -42,11 +46,13 @@ public class AnaliseBio implements Serializable {
 	//bi-directional many-to-one association to Analise
 	@OneToOne
 	@JoinColumn(name="id_analise")
+	@XmlTransient
 	private Analise analise;
 
 	//bi-directional many-to-one association to Taxon
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_taxon")
+	@XmlTransient
 	private Taxon taxon;
 
 	//bi-directional many-to-one association to Usuario

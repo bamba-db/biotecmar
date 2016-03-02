@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -16,25 +15,19 @@ import br.com.bioimportejb.bean.AmostraBean;
 import br.com.bioimportejb.entidades.Amostra;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 
-@Path("/amostra/{id}")
+@Path("/amostras/")
 @Named
 @RequestScoped
-public class AmostraRest {
+public class AmostrasRest {
 	
 	@Inject
 	private AmostraBean amostraBean;
 	
 	@GET
 	@Produces( { MediaType.APPLICATION_XML })
-	 public List<Amostra> procurarAmostra(@PathParam("id") Long id) throws ExcecaoIntegracao {
+	 public List<Amostra> procurarAmostra() throws ExcecaoIntegracao {
 		List<Amostra> lista = new ArrayList<Amostra>();
-		if(id != null) {
-			Amostra a = amostraBean.buscarPorId(id);
-			lista.add(a);
-		} else {
-			lista = amostraBean.listarAmostras();
-		}
-		
+		lista = amostraBean.listarAmostras();
 		return lista;
 	 }
 
