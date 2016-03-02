@@ -30,8 +30,10 @@ public class Usuario implements Serializable {
 	@SequenceGenerator(name="seq_usuario",sequenceName="bio.seq_usuario", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_usuario")
 	@Column(name="id_usuario")
+	@XmlTransient
 	private Long idUsuario;
 
+	@XmlTransient
 	private String login;
 
 	private String nome;
