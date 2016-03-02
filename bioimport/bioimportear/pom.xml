@@ -8,7 +8,7 @@
   </parent>
   <artifactId>bioimportear</artifactId>
   <packaging>ear</packaging>
-  <name>gerenciadorear</name>
+  <name>bioimportear</name>
   <description>EAR do projeto</description>
   
   <dependencies>

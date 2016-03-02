@@ -10,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
  * The persistent class for the usuario database table.
  * 
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name="usuario", schema="bio")
 @NamedQuery(name="Usuario.findAll", query="SELECT u FROM Usuario u")
@@ -32,6 +36,7 @@ public class Usuario implements Serializable {
 
 	private String nome;
 
+	@XmlTransient
 	private String senha;
 
 	public Usuario() {
