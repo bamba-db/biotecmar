@@ -3,11 +3,11 @@ package br.com.bioimportejb.service;
 import javax.ejb.Local;
 
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.entidades.Ator;
 
 @Local
 public interface ProvedorAutenticacaoService{
 	
-	public Usuario buscarUsuarioPorLoginESenha(String login, String senha) throws ExcecaoGenerica;
+	public Ator buscarAtorPorLoginESenha(String login, String senha) throws ExcecaoGenerica;
 
 }

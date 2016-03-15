@@ -9,7 +9,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
-import br.com.bioimportejb.service.UsuarioService;
+import br.com.bioimportejb.service.AtorService;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
     
 @ManagedBean(name="validatorMB")
@@ -18,7 +18,7 @@ public class ValidatorManagedBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@EJB
-	private UsuarioService atorBean;
+	private AtorService atorBean;
     
     public void validaExistenciaLogin(FacesContext facesContext, UIComponent uiComponent, Object value){
     	

@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.entidades.Ator;
 import br.com.bioimportweb.autenticacao.AuthenticationService;
 import br.com.bioimportweb.util.Util;
     
@@ -23,7 +23,7 @@ import br.com.bioimportweb.util.Util;
 public class LoginManagedBean implements Serializable {  
       
 	private static final long serialVersionUID = 1L;
-	private Usuario ator; 
+	private Ator ator; 
 	private String username;
 	private String password;
 	
@@ -83,10 +83,10 @@ public class LoginManagedBean implements Serializable {
 	    this.authenticationService = authenticationService;
 	}
 
-	public Usuario getAtor() {
+	public Ator getAtor() {
 		return ator;
 	}
-	public void setAtor(Usuario ator) {
+	public void setAtor(Ator ator) {
 		this.ator = ator;
 	}
 

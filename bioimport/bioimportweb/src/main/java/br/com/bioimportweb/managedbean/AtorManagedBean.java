@@ -10,8 +10,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import br.com.bioimportejb.entidades.Usuario;
-import br.com.bioimportejb.service.UsuarioService;
+import br.com.bioimportejb.entidades.Ator;
+import br.com.bioimportejb.service.AtorService;
 import br.com.bioimportejb.util.EncriptarMD5;
 import br.com.bioimportweb.autenticacao.AuthenticationService;
 import br.com.bioimportweb.util.Util;
@@ -22,10 +22,10 @@ import br.com.daofabrica.excecoes.ExcecaoGenerica;
 public class AtorManagedBean implements Serializable {  
     
 	private static final long serialVersionUID = 1L;
-	private Usuario ator = new Usuario();
+	private Ator ator = new Ator();
 	
 	@EJB
-	private UsuarioService atorBean;
+	private AtorService atorBean;
 	@ManagedProperty(value = "#{authenticationService}")
 	private AuthenticationService authenticationService;
 	
@@ -38,7 +38,7 @@ public class AtorManagedBean implements Serializable {
 	public void carregarTela() {
 		ator = Util.pegarAtor();
 		if(ator == null){
-			ator = new Usuario();
+			ator = new Ator();
 		}
 	}
 
@@ -54,7 +54,7 @@ public class AtorManagedBean implements Serializable {
     		
     		//salva o usuario com a senha encriptada
     		ator.setSenha(EncriptarMD5.encriptar(ator.getSenha()));
-			atorBean.inserirUsuario(ator);
+			atorBean.inserirAtor(ator);
 		} catch (ExcecaoGenerica e) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), "Erro na persistencia");  
 	        FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -62,7 +62,7 @@ public class AtorManagedBean implements Serializable {
 		}
     	
     	//Autentica o usuario (coloca o usuario que acabou de criar logado no sistema)
-		Usuario atorLogado = authenticationService.login(ator.getLogin(), senha);
+		Ator atorLogado = authenticationService.login(ator.getLogin(), senha);
    		if (atorLogado == null) {
    			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Login ou Senha inválidos");  
 	        FacesContext.getCurrentInstance().addMessage("mensagemFalhaLogin", msg);
@@ -80,7 +80,7 @@ public class AtorManagedBean implements Serializable {
 	public String editarAtor(){
     	
     	try {
-			atorBean.alterarUsuario(ator);
+			atorBean.alterarAtor(ator);
 		} catch (ExcecaoGenerica e) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), "Erro na persistencia");  
 	        FacesContext.getCurrentInstance().addMessage("mensagemFalhaLogin", msg);
@@ -118,10 +118,10 @@ public class AtorManagedBean implements Serializable {
 	    this.authenticationService = authenticationService;
 	}
     
-	public Usuario getAtor() {
+	public Ator getAtor() {
 		return ator;
 	}
-	public void setAtor(Usuario ator) {
+	public void setAtor(Ator ator) {
 		this.ator = ator;
 	}
 

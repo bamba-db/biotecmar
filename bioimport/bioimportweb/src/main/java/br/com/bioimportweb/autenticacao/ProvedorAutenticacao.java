@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.entidades.Ator;
 import br.com.bioimportejb.service.ProvedorAutenticacaoService;
 import br.com.bioimportejb.util.EncriptarMD5;
 import br.com.bioimportweb.managedbean.SessaoManagedBean;
@@ -30,12 +30,12 @@ public class ProvedorAutenticacao implements AuthenticationProvider{
 			throws AuthenticationException {
 		log.info("*******************Autenticação********************");
 		
-		Usuario ator = null;
+		Ator ator = null;
 		try {
 			provedorAutenticacaoService = (ProvedorAutenticacaoService) 
 					new InitialContext().lookup("java:global/bioimportear/bioimportejb/ProvedorAutenticacaoBean");
 			
-			ator = provedorAutenticacaoService.buscarUsuarioPorLoginESenha(authentication.getName(), EncriptarMD5.encriptar(authentication.getCredentials().toString()));
+			ator = provedorAutenticacaoService.buscarAtorPorLoginESenha(authentication.getName(), EncriptarMD5.encriptar(authentication.getCredentials().toString()));
 			
 		} catch (ExcecaoGenerica e) {
 			log.error(e.getMessage(), e);

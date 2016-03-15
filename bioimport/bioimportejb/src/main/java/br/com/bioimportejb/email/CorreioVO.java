@@ -56,10 +56,10 @@ public class CorreioVO implements Serializable{
 	public void addMensagens(String mensagem) {
 		this.mensagens.add(mensagem);
 	}
-	public String getUsuarioAutorizacao() {
+	public String getAtorAutorizacao() {
 		return usuarioAutorizacao;
 	}
-	public void setUsuarioAutorizacao(String usuarioAutorizacao) {
+	public void setAtorAutorizacao(String usuarioAutorizacao) {
 		this.usuarioAutorizacao = usuarioAutorizacao;
 	}
 	public String getSenhaAutorizacao() {

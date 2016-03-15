@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.entidades.Ator;
 
 @Component
 public class AuthenticationService implements Serializable{
@@ -25,7 +25,7 @@ public class AuthenticationService implements Serializable{
 	@Qualifier("authenticationManager")
 	private AuthenticationManager authenticationManager;
 
-	public Usuario login(String username, String password) {
+	public Ator login(String username, String password) {
 		try {
 			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
 			Autenticacao autenticacao = (Autenticacao) authenticationManager.authenticate(token);
@@ -42,7 +42,7 @@ public class AuthenticationService implements Serializable{
 		invalidateSession();
 	}
 
-	public User getUsuarioLogado() {
+	public User getAtorLogado() {
 	    return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 

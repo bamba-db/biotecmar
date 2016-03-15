@@ -3,17 +3,22 @@
 	<persistence-unit name="bioimportejb">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<jta-data-source>java:/bioimportejb</jta-data-source>
-		<class>br.com.bioimportejb.entidades.Amostra</class>
-		<class>br.com.bioimportejb.entidades.Analise</class>
-		<class>br.com.bioimportejb.entidades.AnaliseBio</class>
-		<class>br.com.bioimportejb.entidades.Configuracao</class>
-		<class>br.com.bioimportejb.entidades.DadosGerai</class>
-		<class>br.com.bioimportejb.entidades.DadosTaxon</class>
-		<class>br.com.bioimportejb.entidades.Descritor</class>
-		<class>br.com.bioimportejb.entidades.DescritorUnidade</class>
+		
+		<class>br.com.bioimportejb.entidades.AbioticAnalysi</class>
+		<class>br.com.bioimportejb.entidades.Area</class>
+		<class>br.com.bioimportejb.entidades.Ator</class>
+		<class>br.com.bioimportejb.entidades.BenthicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.BioticAnalysi</class>
+		<class>br.com.bioimportejb.entidades.FishAssemblyAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysiPK</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeTaxonomicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.MetagenomeTaxonomicAnalysiPK</class>
+		<class>br.com.bioimportejb.entidades.MetagenomicAnalysi</class>
+		<class>br.com.bioimportejb.entidades.ReferenceDb</class>
+		<class>br.com.bioimportejb.entidades.Sample</class>
+		<class>br.com.bioimportejb.entidades.SampleType</class>
 		<class>br.com.bioimportejb.entidades.Taxon</class>
-		<class>br.com.bioimportejb.entidades.UnidadeMedida</class>
-		<class>br.com.bioimportejb.entidades.Usuario</class>
 		<properties>
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />

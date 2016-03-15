@@ -13,13 +13,13 @@ import javax.persistence.PersistenceException;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 import br.com.daofabrica.fabrica.DAOFabrica;
 import br.com.daofabrica.fabrica.DAOFabricaImpl;
-import br.com.bioimportejb.dao.UsuarioDAO;
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.dao.AtorDAO;
+import br.com.bioimportejb.entidades.Ator;
 import br.com.bioimportejb.enumerator.PerfilEnum;
-import br.com.bioimportejb.service.UsuarioService;
+import br.com.bioimportejb.service.AtorService;
 
 @Stateless
-public class UsuarioBean implements UsuarioService, Serializable{
+public class AtorBean implements AtorService, Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -33,12 +33,12 @@ public class UsuarioBean implements UsuarioService, Serializable{
 		daoFabrica = new DAOFabricaImpl(em);
 	}
 	
-	public UsuarioDAO getUsuarioDAO() throws ExcecaoGenerica{
-		return (UsuarioDAO) daoFabrica.getDAO(Usuario.class);
+	public AtorDAO getAtorDAO() throws ExcecaoGenerica{
+		return (AtorDAO) daoFabrica.getDAO(Ator.class);
 	}
 	
-	public Usuario inserirUsuario(Usuario ator) throws ExcecaoGenerica{
-		ator = getUsuarioDAO().salvar(ator);
+	public Ator inserirAtor(Ator ator) throws ExcecaoGenerica{
+		ator = getAtorDAO().salvar(ator);
 		try{
 			em.flush();
 		}catch(PersistenceException e){
@@ -48,35 +48,48 @@ public class UsuarioBean implements UsuarioService, Serializable{
 		return ator;
 	}
 
-	public Usuario alterarUsuario(Usuario ator) throws ExcecaoGenerica {
-		ator = getUsuarioDAO().alterar(ator);
+	public Ator alterarAtor(Ator ator) throws ExcecaoGenerica {
+		ator = getAtorDAO().alterar(ator);
 		return ator;
 	}
 	
 	public String buscarEmailPorLogin(String login) throws ExcecaoGenerica {
-		return getUsuarioDAO().buscarEmailPorLogin(login);
+		return getAtorDAO().buscarEmailPorLogin(login);
 	}
 	
 	public boolean verificarExistenciaLogin(String login, Long id) throws ExcecaoGenerica {
-		return getUsuarioDAO().verificarExistenciaLogin(login, id);
+		return getAtorDAO().verificarExistenciaLogin(login, id);
 	}
 
 	@Override
 	public Boolean validarCodigo(String login, String codigo) throws ExcecaoGenerica {
-		return getUsuarioDAO().validarUsuarioPorLoginECodigo(login, codigo);
+		return getAtorDAO().validarAtorPorLoginECodigo(login, codigo);
 	}
 
 	@Override
 	public Boolean validarLogin(String login, String senhaAtual) throws ExcecaoGenerica {
-		return getUsuarioDAO().validarUsuarioPorLoginESenha(login, senhaAtual);
+		return getAtorDAO().validarAtorPorLoginESenha(login, senhaAtual);
 	}
 
 	@Override
-	public void alterarSenhaUsuario(String login, String senha) throws ExcecaoGenerica {
-		Usuario ator = getUsuarioDAO().buscarUsuarioPorLogin(login);
+	public void alterarSenhaAtor(String login, String senha) throws ExcecaoGenerica {
+		Ator ator = getAtorDAO().buscarAtorPorLogin(login);
 		ator.setSenha(senha);
-		getUsuarioDAO().alterar(ator);
+		getAtorDAO().alterar(ator);
+	}
+	
+	@Override
+	public void salvarCodigoEDataExpiracaoCodigo(String login, String codigo, Calendar dataExpiracaoSenha) throws ExcecaoGenerica {
+		Ator ator = getAtorDAO().buscarAtorPorLogin(login);
+		//TODO acrescentar alteração de senha
+//		ator.setCodigo(codigo);
+//		ator.setDataExpiracaoSenha(dataExpiracaoSenha);
+		getAtorDAO().alterar(ator);
 	}
 
+	@Override
+	public List<Ator> buscarAtorPorPerfil(PerfilEnum ad) throws ExcecaoGenerica {
+		return getAtorDAO().buscarAtorPorPerfil(ad);
+	}
 	
 }

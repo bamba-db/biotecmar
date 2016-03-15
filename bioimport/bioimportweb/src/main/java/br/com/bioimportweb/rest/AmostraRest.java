@@ -12,8 +12,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import br.com.bioimportejb.bean.AmostraBean;
-import br.com.bioimportejb.entidades.Amostra;
+import br.com.bioimportejb.bean.SampleBean;
+import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 
 @Path("/amostra/{id}")
@@ -22,17 +22,17 @@ import br.com.bioimportejb.exception.ExcecaoIntegracao;
 public class AmostraRest {
 	
 	@Inject
-	private AmostraBean amostraBean;
+	private SampleBean amostraBean;
 	
 	@GET
 	@Produces( { MediaType.APPLICATION_XML })
-	 public List<Amostra> procurarAmostra(@PathParam("id") Long id) throws ExcecaoIntegracao {
-		List<Amostra> lista = new ArrayList<Amostra>();
+	 public List<Sample> procurarSample(@PathParam("id") Long id) throws ExcecaoIntegracao {
+		List<Sample> lista = new ArrayList<Sample>();
 		if(id != null) {
-			Amostra a = amostraBean.buscarPorId(id);
+			Sample a = amostraBean.buscarPorId(id);
 			lista.add(a);
 		} else {
-			lista = amostraBean.listarAmostras();
+			lista = amostraBean.listarSamples();
 		}
 		
 		return lista;

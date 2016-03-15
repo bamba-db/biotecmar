@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
-import br.com.bioimportejb.entidades.Usuario;
+import br.com.bioimportejb.entidades.Ator;
 import br.com.bioimportweb.util.Util;
     
 @ManagedBean(name="sessaoMB")
@@ -13,15 +13,15 @@ import br.com.bioimportweb.util.Util;
 public class SessaoManagedBean implements Serializable {  
       
 	private static final long serialVersionUID = 1L;
-	private Usuario ator;
+	private Ator ator;
 	
-	public Usuario getAtor() {
+	public Ator getAtor() {
 		if(null == ator){
     		ator = Util.pegarAtor();
     	}
 		return ator;
 	}
-	public void setAtor(Usuario ator) {
+	public void setAtor(Ator ator) {
 		this.ator = ator;
 	}
 	

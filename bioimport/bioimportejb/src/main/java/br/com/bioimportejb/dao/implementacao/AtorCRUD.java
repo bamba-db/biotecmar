@@ -11,30 +11,30 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import br.com.bioimportejb.dao.UsuarioDAO;
-import br.com.bioimportejb.entidades.Usuario;
-import br.com.bioimportejb.enumerator.PerfilEnum;
 import br.com.daofabrica.crud.CRUDGenerico;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
+import br.com.bioimportejb.dao.AtorDAO;
+import br.com.bioimportejb.entidades.Ator;
+import br.com.bioimportejb.enumerator.PerfilEnum;
 
-public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioDAO, Serializable{
+public class AtorCRUD extends CRUDGenerico<Ator, Long> implements AtorDAO, Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	public Usuario buscarUsuarioPorLoginESenha(String login, String senha){
+	public Ator buscarAtorPorLoginESenha(String login, String senha){
 		
 		Criteria criteria = ((Session)getEntityManager().getDelegate()).createCriteria(getClassePersistente());
 		criteria.add(Restrictions.eq("login", login));
 		criteria.add(Restrictions.eq("senha", senha));
 		
-		Usuario ator = (Usuario) criteria.uniqueResult();
+		Ator ator = (Ator) criteria.uniqueResult();
 	
 		return ator;
 	}
 
 	public String buscarEmailPorLogin(String login) throws ExcecaoGenerica{
 
-		StringBuffer hql = new StringBuffer("select c.login FROM Usuario c where c.login = :login ");
+		StringBuffer hql = new StringBuffer("select c.login FROM Ator c where c.login = :login ");
 		Query query = ((Session)getEntityManager().getDelegate()).createQuery(hql.toString());
 		query.setString("login", login);
 		return (String) query.uniqueResult();
@@ -42,7 +42,7 @@ public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioD
 	
 	public boolean verificarExistenciaLogin(String login, Long id) throws ExcecaoGenerica{
 
-		StringBuffer hql = new StringBuffer("select count(c.id) FROM Usuario c where c.login = :login ");
+		StringBuffer hql = new StringBuffer("select count(c.id) FROM Ator c where c.login = :login ");
 		if(null != id){
 			hql.append(" and c.id != :id");
 		}
@@ -56,8 +56,8 @@ public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioD
 	}
 
 	@Override
-	public boolean validarUsuarioPorLoginECodigo(String login, String codigo) {
-		StringBuffer hql = new StringBuffer("select count(c.id) FROM Usuario c where c.login = :login and c.codigo = :codigo and c.dataHoraValidadeCodigo > :agora");
+	public boolean validarAtorPorLoginECodigo(String login, String codigo) {
+		StringBuffer hql = new StringBuffer("select count(c.id) FROM Ator c where c.login = :login and c.codigo = :codigo and c.dataHoraValidadeCodigo > :agora");
 		
 		Query query = ((Session)getEntityManager().getDelegate()).createQuery(hql.toString());
 		query.setString("login", login);
@@ -68,8 +68,8 @@ public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioD
 	}
 
 	@Override
-	public boolean validarUsuarioPorLoginESenha(String login, String senhaAtual) {
-		StringBuffer hql = new StringBuffer("select count(c.id) FROM Usuario c where c.login = :login and c.senha = :senhaAtual");
+	public boolean validarAtorPorLoginESenha(String login, String senhaAtual) {
+		StringBuffer hql = new StringBuffer("select count(c.id) FROM Ator c where c.login = :login and c.senha = :senhaAtual");
 		
 		Query query = ((Session)getEntityManager().getDelegate()).createQuery(hql.toString());
 		query.setString("login", login);
@@ -79,11 +79,11 @@ public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioD
 	}
 
 	@Override
-	public Usuario buscarUsuarioPorLogin(String login) throws ExcecaoGenerica {
+	public Ator buscarAtorPorLogin(String login) throws ExcecaoGenerica {
 		Criteria criteria = ((Session)getEntityManager().getDelegate()).createCriteria(getClassePersistente());
 		criteria.add(Restrictions.eq("login", login));
 		
-		Usuario ator = (Usuario) criteria.uniqueResult();
+		Ator ator = (Ator) criteria.uniqueResult();
 		return ator;
 	}
 
@@ -91,10 +91,39 @@ public class UsuarioCRUD extends CRUDGenerico<Usuario, Long> implements UsuarioD
 	public List<String> buscarPorPerfil(PerfilEnum ad) throws ExcecaoGenerica {
 		try{
 			StringBuilder hql = new StringBuilder();
-			hql.append("select ator.login from Usuario ator  ");
-			hql.append(" where ator.perfil = :sigla ");
+			hql.append("select ator.login from Ator ator left outer join ator.perfils as perfil ");
+			hql.append(" where perfil.sigla = :sigla ");
 			Query query = criarQuery(hql.toString());
 			query.setParameter("sigla", ad.toString());
+			return query.list();
+		} catch(HibernateException e){
+			throw new ExcecaoGenerica(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<Ator> buscarAtorPorPerfil(PerfilEnum ad) throws ExcecaoGenerica {
+		try{
+			StringBuilder hql = new StringBuilder();
+			hql.append("select ator from Ator ator left outer join ator.perfils as perfil ");
+			hql.append(" where perfil.sigla = :sigla");
+			Query query = criarQuery(hql.toString());
+			query.setParameter("sigla", ad.getSigla());
+			return query.list();
+		} catch(HibernateException e){
+			throw new ExcecaoGenerica(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<Ator> buscarAtorPorPerfil(List<String> perfisSiglas)
+			throws ExcecaoGenerica {
+		try{
+			StringBuilder hql = new StringBuilder();
+			hql.append("select ator from Ator ator left outer join ator.perfils as perfil ");
+			hql.append(" where perfil.sigla in :perfisSiglas");
+			Query query = criarQuery(hql.toString());
+			query.setParameterList("perfisSiglas", perfisSiglas);
 			return query.list();
 		} catch(HibernateException e){
 			throw new ExcecaoGenerica(e.getMessage());

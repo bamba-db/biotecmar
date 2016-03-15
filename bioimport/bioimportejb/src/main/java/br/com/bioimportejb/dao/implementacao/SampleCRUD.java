@@ -10,20 +10,20 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import br.com.bioimportejb.dao.AmostraDAO;
-import br.com.bioimportejb.entidades.Amostra;
+import br.com.bioimportejb.dao.SampleDAO;
+import br.com.bioimportejb.entidades.Sample;
 import br.com.daofabrica.crud.CRUDGenerico;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 
-public class AmostraCRUD extends CRUDGenerico<Amostra, Long> implements AmostraDAO, Serializable{
+public class SampleCRUD extends CRUDGenerico<Sample, Long> implements SampleDAO, Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	public List<Amostra> listarAscOuDesc(String ordemAscCampo, boolean buscarAsc) throws ExcecaoGenerica {
+	public List<Sample> listarAscOuDesc(String ordemAscCampo, boolean buscarAsc) throws ExcecaoGenerica {
 		
-		logger.info("::::Acionou o método listarAscOuDesc em GenericCRUD::::");
+		logger.info("::::Acionou o mï¿½todo listarAscOuDesc em GenericCRUD::::");
 		
-		List<Amostra> lista = null;
+		List<Sample> lista = null;
 		
 		try {
 			Criteria criteria = null;
@@ -37,8 +37,8 @@ public class AmostraCRUD extends CRUDGenerico<Amostra, Long> implements AmostraD
 			}
 			
 			lista = criteria.list();
-			for(Amostra s : lista) {
-				s.getAnalises().size();
+			for(Sample s : lista) {
+				s.getFishAssemblyAnalysi().size();
 			}
 			return lista;
 		} catch (HibernateException e) {

@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,13 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.CSVReader;
 
-import br.com.bioimportejb.bean.AmostraBean;
-import br.com.bioimportejb.bean.interfaces.DadosTaxonLocal;
-import br.com.bioimportejb.entidades.Amostra;
-import br.com.bioimportejb.entidades.Analise;
-import br.com.bioimportejb.entidades.AnaliseBio;
-import br.com.bioimportejb.entidades.DadosTaxon;
+import br.com.bioimportejb.bean.SampleBean;
+import br.com.bioimportejb.bean.interfaces.TaxonLocal;
+import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
+import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.entidades.Taxon;
+import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.bioimportejb.util.ChaveSampleVO;
 import br.com.bioimportweb.util.Util;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
@@ -52,8 +50,12 @@ public class ImportacaoCsv implements Serializable {
  
 	private Logger log = LoggerFactory.getLogger(getClass());
 	@EJB
-	private AmostraBean sampleBean;
-	private List<Amostra> listaSamples;
+	private SampleBean sampleBean;
+	
+	@EJB
+	private TaxonLocal taxonLocal;
+	
+	private List<Sample> listaSamples;
 	
 	private static final int PHYLUM = 4;
 
@@ -97,23 +99,19 @@ public class ImportacaoCsv implements Serializable {
 	private static final int MEDIATYPE = 40;
 	private static final int ISSUE = 41;
 	
-
-	@EJB
-	private DadosTaxonLocal dadosTaxonBean;
 	
-	public Collection<Amostra> lerCsv(InputStream inputStream) {
-		Map<ChaveSampleVO, Amostra> samples = new HashMap<ChaveSampleVO, Amostra>(); 
+	public Collection<Sample> lerCsv(InputStream inputStream) throws ExcecaoIntegracao {
+		Map<ChaveSampleVO, Sample> samples = new HashMap<ChaveSampleVO, Sample>(); 
+		CSVReader reader = null;
 		try {
-			 CSVReader reader = new CSVReader(new InputStreamReader(inputStream), '\t');
+			 reader = new CSVReader(new InputStreamReader(inputStream), '\t');
 			 String [] linha;
 			 
 			 int count = 0;
-			 Map<Long, DadosTaxon> dadosTaxon = new HashMap<Long, DadosTaxon>();
+			 Map<Long, Taxon> dadosTaxon = new HashMap<Long, Taxon>();
 			 while ((linha = reader.readNext()) != null) {
 				if(count != 0) {
-					Amostra sample = new Amostra();
-					sample.setDtInclusao(Calendar.getInstance().getTime());
-					sample.setUsuario(Util.pegarAtor());
+					Sample sample = new Sample();
 					ChaveSampleVO chave = new ChaveSampleVO();
 					int tamanhoLinha = linha.length;
 					BigDecimal latitude = null;
@@ -134,7 +132,7 @@ public class ImportacaoCsv implements Serializable {
 							String depthString = linha[DEPTH];
 							if(depthString != null && !"".equals(depthString)) {
 								BigDecimal depth = new BigDecimal(depthString);
-								sample.setProfundidade(depth);
+								sample.setDepth(depth);
 								chave.setDepth(depth);
 							}
 						} catch (Exception e) {
@@ -143,28 +141,14 @@ public class ImportacaoCsv implements Serializable {
 					}
 					
 					Date data = dataCsv(linha);
-					sample.setDtAmostra(data);
+					sample.setDt(data);
 					chave.setData(data);
 					
-					Amostra aux = samples.get(chave);
+					Sample aux = samples.get(chave);
 					if(aux != null) {
 						sample = aux;
 					}
-					Analise f = new Analise();
-					f.setUsuario(Util.pegarAtor());
-			    	f.setDtAnalise(Calendar.getInstance().getTime());
-			    	
-			    	if(f.getAnaliseBio() == null) {
-			    		AnaliseBio analiseBio = new AnaliseBio();
-			    		analiseBio.setUsuario(Util.pegarAtor());
-			    		analiseBio.setDtInclusao(Calendar.getInstance().getTime());
-						f.setAnaliseBio(analiseBio);
-						Taxon taxon = new Taxon();
-						taxon.setUsuario(Util.pegarAtor());
-						f.getAnaliseBio().setTaxon(taxon);
-						f.getAnaliseBio().setAnalise(f);
-						
-					}
+					FishAssemblyAnalysi f = new FishAssemblyAnalysi();
 			    	
 			    	/**
 			    	 * Sistema recupera o taxonkey da linha corrente
@@ -176,7 +160,7 @@ public class ImportacaoCsv implements Serializable {
 			    		taxonkey = Long.valueOf(linha[TAXONKEY]);
 			    	}
 			    	
-			    	DadosTaxon dTaxon = null;
+			    	Taxon dTaxon = null;
 			    	
 			    	/**
 			    	 * O sistema verifica se existe algum registro, com o taxonkey recuperado, no banco
@@ -184,7 +168,7 @@ public class ImportacaoCsv implements Serializable {
 			    	 * o sistema cria um novo para que futuramente possa ser persistido.
 			    	 */
 			    	if(taxonkey != null) {
-						dTaxon = dadosTaxonBean.buscarPorTaxonKey(taxonkey);
+						dTaxon = taxonLocal.buscarPorTaxonKey(taxonkey);
 			    	} 
 			    	
 			    	if(dTaxon == null) {
@@ -192,7 +176,7 @@ public class ImportacaoCsv implements Serializable {
 			    	}
 			    	
 			    	if(dTaxon == null) {
-			    		dTaxon = new DadosTaxon();
+			    		dTaxon = new Taxon();
 			    		dTaxon.setTaxonkey(taxonkey);
 			    	} 
 			    	
@@ -209,7 +193,7 @@ public class ImportacaoCsv implements Serializable {
 			    	}
 			    	
 			    	if(ORDER < tamanhoLinha) {
-			    		dTaxon.setOrd(linha[ORDER]);
+			    		dTaxon.setOrder(linha[ORDER]);
 			    	}
 			    	
 			    	if(FAMILY < tamanhoLinha) {
@@ -233,13 +217,13 @@ public class ImportacaoCsv implements Serializable {
 			    	}
 			    	
 			    	if(SCIENTIFICNAME < tamanhoLinha) {
-			    		dTaxon.setScientifcname(linha[SCIENTIFICNAME]);
+			    		dTaxon.setScientificname(linha[SCIENTIFICNAME]);
 			    	}
 			    	
-			    	f.getAnaliseBio().getTaxon().setDadosTaxon(dTaxon);
+			    	f.setTaxon(dTaxon);
 			    	dadosTaxon.put(dTaxon.getTaxonkey(), dTaxon);
 			    	
-			    	sample.addAnalis(f);
+			    	sample.addFishAssemblyAnalysi(f);
 			    	samples.put(chave, sample);
 				}
 				count ++;
@@ -248,10 +232,14 @@ public class ImportacaoCsv implements Serializable {
 			log.error(e.getMessage(), e);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-		} catch (ExcecaoGenerica e) {
-			log.error(e.getMessage(), e);
-			Util.montaMensagemFlashRedirect("Erro na importação", null);
-			Util.validationFailed();
+		} finally {
+			if(reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new ExcecaoIntegracao(e);
+				}
+			}
 		}
 		return samples.values();  
 	}
@@ -276,23 +264,18 @@ public class ImportacaoCsv implements Serializable {
      
     public void upload(FileUploadEvent fileUploadEvent) {
         
-//        FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " is uploaded.");
-//        FacesContext.getCurrentInstance().addMessage(null, message);
         file = fileUploadEvent.getFile();
        
     }
     
-    public void importar() {
+    public void importar() throws ExcecaoIntegracao {
     	try {
-			listaSamples = new ArrayList<Amostra>(); 
+			listaSamples = new ArrayList<Sample>(); 
 			listaSamples.addAll(lerCsv(getFile().getInputstream()));
 			listaSamples = sampleBean.salvar(listaSamples);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 			Util.montaMensagemErroSemFlashRedirect("Erro ao importar arquivo", null);
-		} catch (ExcecaoGenerica e) {
-			log.error(e.getMessage(), e);
-			Util.montaMensagemErroSemFlashRedirect(e.getMessage(), null);
 		}
     }
 
@@ -304,11 +287,11 @@ public class ImportacaoCsv implements Serializable {
 		this.arquivo = arquivo;
 	}
 
-	public List<Amostra> getListaSamples() {
+	public List<Sample> getListaSamples() {
 		return listaSamples;
 	}
 
-	public void setListaSamples(List<Amostra> listaSamples) {
+	public void setListaSamples(List<Sample> listaSamples) {
 		this.listaSamples = listaSamples;
 	}
 	

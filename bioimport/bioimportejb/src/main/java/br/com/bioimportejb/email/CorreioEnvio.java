@@ -132,7 +132,7 @@ public class CorreioEnvio implements Serializable{
 		Properties properties = new Properties();
 		try {
 			properties.load(getClass().getResourceAsStream(ConstantesDeProperties.CORREIO_PROPERTIES));
-			messageProperties.setUsuarioAutorizacao(properties.getProperty(ConstantesDeProperties.SMTP_AUTORIZACAO_USER));
+			messageProperties.setAtorAutorizacao(properties.getProperty(ConstantesDeProperties.SMTP_AUTORIZACAO_USER));
 			messageProperties.setSenhaAutorizacao(properties.getProperty(ConstantesDeProperties.SMTP_AUTORIZACAO_SENHA));
 			
 			String flagEnviarEmail = properties.getProperty("flag.enviar.email");
@@ -144,7 +144,7 @@ public class CorreioEnvio implements Serializable{
 			
 			messageProperties.setEmailParaTeste(properties.getProperty("email.para.teste"));
 			//Faz a autenticacao do servidor de envio de email
-		    this.session = Session.getInstance(properties, new SMTPAuthenticator(messageProperties.getUsuarioAutorizacao(), messageProperties.getSenhaAutorizacao()));
+		    this.session = Session.getInstance(properties, new SMTPAuthenticator(messageProperties.getAtorAutorizacao(), messageProperties.getSenhaAutorizacao()));
 
 		} catch (IOException e) {
 			throw new EnvioEmailException(MensagensConstantes.ERRO_RECUPERACAO_ARQUIVO_LOG, e);
