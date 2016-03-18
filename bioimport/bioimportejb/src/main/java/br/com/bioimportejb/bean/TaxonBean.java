@@ -42,5 +42,14 @@ public class TaxonBean implements TaxonLocal, Serializable{
 			throw new ExcecaoIntegracao(e);
 		}
 	}
+
+	@Override
+	public Taxon salvar(Taxon dTaxon) throws ExcecaoIntegracao {
+		try {
+			return getTaxonDAO().salvar(dTaxon);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
+	}
 	
 }

@@ -43,7 +43,7 @@ public class FishAssemblyAnalysi implements Serializable {
 	private Sample sample;
 
 	//bi-directional many-to-one association to Taxon
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="id_taxon")
 	private Taxon taxon;
 

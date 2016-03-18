@@ -7,4 +7,6 @@ public interface TaxonLocal {
 
 	public Taxon buscarPorTaxonKey(Long taxonkey) throws ExcecaoIntegracao;
 
+	public Taxon salvar(Taxon dTaxon) throws ExcecaoIntegracao;;
+
 }

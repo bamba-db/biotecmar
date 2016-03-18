@@ -108,7 +108,7 @@ public class ImportacaoCsv implements Serializable {
 			 String [] linha;
 			 
 			 int count = 0;
-			 Map<Long, Taxon> dadosTaxon = new HashMap<Long, Taxon>();
+			 
 			 while ((linha = reader.readNext()) != null) {
 				if(count != 0) {
 					Sample sample = new Sample();
@@ -169,59 +169,61 @@ public class ImportacaoCsv implements Serializable {
 			    	 */
 			    	if(taxonkey != null) {
 						dTaxon = taxonLocal.buscarPorTaxonKey(taxonkey);
-			    	} 
+			    	}  
 			    	
-			    	if(dTaxon == null) {
-			    		dTaxon = dadosTaxon.get(taxonkey);
-			    	}
-			    	
+			    	/**
+			    	 * Caso o taxon ainda não exista no banco de dados, o sistema grava as informações do novo taxon
+			    	 * encontrado.
+			    	 */
 			    	if(dTaxon == null) {
 			    		dTaxon = new Taxon();
 			    		dTaxon.setTaxonkey(taxonkey);
+			    	 
+			    	
+						if(KINGDOM < tamanhoLinha) {
+				    		dTaxon.setKingdom(linha[KINGDOM]);
+				    	}
+				    	
+				    	if(PHYLUM < tamanhoLinha) {
+				    		dTaxon.setPhylum(linha[PHYLUM]);
+				    	}
+				    	
+				    	if(CLASS < tamanhoLinha) {
+				    		dTaxon.setClass_(linha[CLASS]);
+				    	}
+				    	
+				    	if(ORDER < tamanhoLinha) {
+				    		dTaxon.setOrder(linha[ORDER]);
+				    	}
+				    	
+				    	if(FAMILY < tamanhoLinha) {
+				    		dTaxon.setFamily(linha[FAMILY]);
+				    	}
+				    	
+				    	if(GENUS < tamanhoLinha) {
+				    		dTaxon.setGenus(linha[GENUS]);
+				    	}
+				    	
+				    	if(SPECIES < tamanhoLinha) {
+				    		dTaxon.setSpecies(linha[SPECIES]);
+				    	}
+				    	
+				    	if(INFRASPECIFICEPITHET < tamanhoLinha) {
+				    		dTaxon.setInfraspecificepithet(linha[INFRASPECIFICEPITHET]);
+				    	}
+				    	
+				    	if(TAXONRANK < tamanhoLinha) {
+				    		dTaxon.setTaxonrank(linha[TAXONRANK]);
+				    	}
+				    	
+				    	if(SCIENTIFICNAME < tamanhoLinha) {
+				    		dTaxon.setScientificname(linha[SCIENTIFICNAME]);
+				    	}
+				    	
+				    	dTaxon = taxonLocal.salvar(dTaxon);
 			    	} 
-			    	
-					if(KINGDOM < tamanhoLinha) {
-			    		dTaxon.setKingdom(linha[KINGDOM]);
-			    	}
-			    	
-			    	if(PHYLUM < tamanhoLinha) {
-			    		dTaxon.setPhylum(linha[PHYLUM]);
-			    	}
-			    	
-			    	if(CLASS < tamanhoLinha) {
-			    		dTaxon.setClass_(linha[CLASS]);
-			    	}
-			    	
-			    	if(ORDER < tamanhoLinha) {
-			    		dTaxon.setOrder(linha[ORDER]);
-			    	}
-			    	
-			    	if(FAMILY < tamanhoLinha) {
-			    		dTaxon.setFamily(linha[FAMILY]);
-			    	}
-			    	
-			    	if(GENUS < tamanhoLinha) {
-			    		dTaxon.setGenus(linha[GENUS]);
-			    	}
-			    	
-			    	if(SPECIES < tamanhoLinha) {
-			    		dTaxon.setSpecies(linha[SPECIES]);
-			    	}
-			    	
-			    	if(INFRASPECIFICEPITHET < tamanhoLinha) {
-			    		dTaxon.setInfraspecificepithet(linha[INFRASPECIFICEPITHET]);
-			    	}
-			    	
-			    	if(TAXONRANK < tamanhoLinha) {
-			    		dTaxon.setTaxonrank(linha[TAXONRANK]);
-			    	}
-			    	
-			    	if(SCIENTIFICNAME < tamanhoLinha) {
-			    		dTaxon.setScientificname(linha[SCIENTIFICNAME]);
-			    	}
-			    	
 			    	f.setTaxon(dTaxon);
-			    	dadosTaxon.put(dTaxon.getTaxonkey(), dTaxon);
+			    	f.setSample(sample);
 			    	
 			    	sample.addFishAssemblyAnalysi(f);
 			    	samples.put(chave, sample);
