@@ -93,6 +93,10 @@ public class Sample implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="type", referencedColumnName="type")
 	private SampleType sampleType;
+	
+	@ManyToOne
+	@JoinColumn(name="id_dataset")
+	private DataSet dataSet;
 
 	public Sample() {
 	}
@@ -199,6 +203,14 @@ public class Sample implements Serializable {
 
 	public void setSampleType(SampleType sampleType) {
 		this.sampleType = sampleType;
+	}
+	
+	public DataSet getDataSet() {
+		return dataSet;
+	}
+
+	public void setDataSet(DataSet dataSet) {
+		this.dataSet = dataSet;
 	}
 
 	@Override

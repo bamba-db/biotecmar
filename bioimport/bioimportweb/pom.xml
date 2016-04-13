@@ -177,8 +177,38 @@
 			<version>3.0.16.Final</version>
 			<scope>provided</scope>
 		</dependency>
-				
-				
+		
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-api</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>validation-api</artifactId>
+					<groupId>javax.validation</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-common-ws</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>validation-api</artifactId>
+					<groupId>javax.validation</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-common-service</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>	
     </dependencies>
  
  

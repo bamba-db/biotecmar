@@ -13,6 +13,31 @@
 			<artifactId>opencsv</artifactId>
 			<version>3.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-api</artifactId>
+			<version>${gbif-api.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-common-ws</artifactId>
+			<version>${gbif-common-ws.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-common-service</artifactId>
+  			<version>0.16</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
   	</dependencies>
   </dependencyManagement>
   
@@ -28,7 +53,9 @@
   	<modulo.web>bioimportweb</modulo.web>
   	<modulo.ejb>bioimportejb</modulo.ejb>
   	<modulo.ear>bioimportear</modulo.ear>
-  	
+  	<gbif-api.version>0.37</gbif-api.version>
+  	<gbif-common-ws.version>0.31</gbif-common-ws.version>
+  	<junit.version>4.12</junit.version>
   </properties>
  
   <build>
