@@ -205,10 +205,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>	
+			<groupId>org.gbif</groupId>
+			<artifactId>dwca-reader</artifactId>
+		</dependency>
     </dependencies>
  
  

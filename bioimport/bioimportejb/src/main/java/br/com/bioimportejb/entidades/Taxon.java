@@ -51,7 +51,7 @@ public class Taxon implements Serializable {
 
 	private String taxonrank;
 
-	private Long taxonkey;	
+	private String taxonkey;	
 	
 	public Taxon() {
 	}
@@ -144,11 +144,11 @@ public class Taxon implements Serializable {
 		this.taxonrank = taxonrank;
 	}
 	
-	public Long getTaxonkey() {
+	public String getTaxonkey() {
 		return taxonkey;
 	}
 
-	public void setTaxonkey(Long taxonkey) {
+	public void setTaxonkey(String taxonkey) {
 		this.taxonkey = taxonkey;
 	}
 

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import br.com.bioimportejb.entidades.Taxon;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.bioimportejb.util.ChaveSampleVO;
 import br.com.bioimportweb.util.Util;
-import br.com.daofabrica.excecoes.ExcecaoGenerica;
  
 @ViewScoped
 @ManagedBean(name="importacaoCsv")
@@ -57,47 +57,49 @@ public class ImportacaoCsv implements Serializable {
 	
 	private List<Sample> listaSamples;
 	
-	private static final int PHYLUM = 4;
+	private static final int PHYLUM = 20;
 
-	private static final int KINGDOM = 3;
+	private static final int KINGDOM = 19;
 	
-	private static final int CLASS = 5;
-	private static final int ORDER = 6;
-	private static final int FAMILY = 7;
-	private static final int GENUS = 8;
-	private static final int SPECIES = 9;
-	private static final int INFRASPECIFICEPITHET = 10;
-	private static final int TAXONRANK = 11;
-	private static final int SCIENTIFICNAME = 12;
-	private static final int COUNTRYCODE = 13;
-	private static final int LOCALITY = 14;
-	private static final int PUBLISHINGORGKEY = 15;
-	private static final int DECIMALLATITUDE = 16;
-	private static final int DECIMALLONGITUDE = 17;
-	private static final int ELEVATION = 18;
-	private static final int ELEVATIONACCURACY = 19;
-	private static final int DEPTH = 20;
-	private static final int DEPTHACCURACY = 21;
-	private static final int EVENTDATE = 22;
-	private static final int DAY = 23;
-	private static final int MONTH = 24;
-	private static final int YEAR = 25;
-	private static final int TAXONKEY = 26;
-	private static final int SPECIESKEY = 27;
-	private static final int BASISOFRECORD = 28;
-	private static final int INSTITUTIONCODE = 29;
-	private static final int COLLECTIONCODE = 30;
-	private static final int CATALOGNUMBER = 31;
-	private static final int RECORDNUMBER = 32;
-	private static final int IDENTIFIEDBY = 33;
-	private static final int RIGHTS = 34;
-	private static final int RIGHTSHOLDER = 35;
-	private static final int RECORDEDBY = 36;
-	private static final int TYPESTATUS = 37;
-	private static final int ESTABLISHMENTMEANS = 38;
-	private static final int LASTINTERPRETED = 39;
-	private static final int MEDIATYPE = 40;
-	private static final int ISSUE = 41;
+	private static final int CLASS = 21;
+	private static final int ORDER = 22;
+	private static final int FAMILY = 23;
+	private static final int GENUS = 24;
+	private static final int SPECIES = 8;
+	private static final int INFRASPECIFICEPITHET = 9;
+	private static final int TAXONRANK = 26;
+	private static final int SCIENTIFICNAME = 18;
+	private static final int COUNTRYCODE = 12;
+	private static final int LOCALITY = 13;
+	private static final int PUBLISHINGORGKEY = 14;
+	private static final int DECIMALLATITUDE = 15;
+	private static final int DECIMALLONGITUDE = 16;
+	private static final int ELEVATION = 17;
+	private static final int ELEVATIONACCURACY = 18;
+	private static final int DEPTH = 19;
+	private static final int MINIMUMDEPTHINMETERS = 13;
+	private static final int DEPTHACCURACY = 20;
+	private static final int EVENTDATE = 21;
+	private static final int DAY = 22;
+	private static final int MONTH = 23;
+	private static final int YEAR = 24;
+	private static final int TAXONKEY = 25;
+	private static final int ID = 0;
+	private static final int SPECIESKEY = 26;
+	private static final int BASISOFRECORD = 27;
+	private static final int INSTITUTIONCODE = 28;
+	private static final int COLLECTIONCODE = 29;
+	private static final int CATALOGNUMBER = 30;
+	private static final int RECORDNUMBER = 31;
+	private static final int IDENTIFIEDBY = 32;
+	private static final int RIGHTS = 33;
+	private static final int RIGHTSHOLDER = 34;
+	private static final int RECORDEDBY = 35;
+	private static final int TYPESTATUS = 36;
+	private static final int ESTABLISHMENTMEANS = 37;
+	private static final int LASTINTERPRETED = 38;
+	private static final int MEDIATYPE = 39;
+	private static final int ISSUE = 40;
 	
 	
 	public Collection<Sample> lerCsv(InputStream inputStream) throws ExcecaoIntegracao {
@@ -127,9 +129,9 @@ public class ImportacaoCsv implements Serializable {
 						chave.setLongitude(longitude);
 					}
 					
-					if(tamanhoLinha > DEPTH) {
+					if(tamanhoLinha > MINIMUMDEPTHINMETERS) {
 						try {
-							String depthString = linha[DEPTH];
+							String depthString = linha[MINIMUMDEPTHINMETERS];
 							if(depthString != null && !"".equals(depthString)) {
 								BigDecimal depth = new BigDecimal(depthString);
 								sample.setDepth(depth);
@@ -155,9 +157,9 @@ public class ImportacaoCsv implements Serializable {
 			    	 * E verifica se já recuperou algum dado taxonômico com o mesmo taxonkey
 			    	 * Caso já exista recupera do Map, caso não cria um novo para sua persistência.
 			    	 */
-			    	Long taxonkey = null;
-			    	if(TAXONKEY < tamanhoLinha) {
-			    		taxonkey = Long.valueOf(linha[TAXONKEY]);
+			    	String taxonkey = null;
+			    	if(ID < tamanhoLinha) {
+			    		taxonkey = linha[ID];
 			    	}
 			    	
 			    	Taxon dTaxon = null;
@@ -167,9 +169,9 @@ public class ImportacaoCsv implements Serializable {
 			    	 * de dados. Caso exista atribui os valores recebidos neste objeto recuperado, e se caso não exista, 
 			    	 * o sistema cria um novo para que futuramente possa ser persistido.
 			    	 */
-			    	if(taxonkey != null) {
-						dTaxon = taxonLocal.buscarPorTaxonKey(taxonkey);
-			    	}  
+//			    	if(taxonkey != null) {
+//						dTaxon = taxonLocal.buscarPorTaxonKey(taxonkey);
+//			    	}  
 			    	
 			    	/**
 			    	 * Caso o taxon ainda não exista no banco de dados, o sistema grava as informações do novo taxon
@@ -248,11 +250,8 @@ public class ImportacaoCsv implements Serializable {
 	private Date dataCsv(String[] linha) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
 		Date data = null;
-		try {
-			data = sdf.parse(linha[LASTINTERPRETED]);
-		} catch (ParseException e) {
-			log.error(e.getMessage(), e);
-		}
+		//TODO data = sdf.parse(linha[LASTINTERPRETED]);
+		data = Calendar.getInstance().getTime();
 		return data;
 	}
 	

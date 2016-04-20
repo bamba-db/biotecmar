@@ -1,13 +1,9 @@
 package br.com.bioimportweb.gbif.api.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.UUID;
 
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.api.service.registry.DatasetService;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class RegistryWsGuiceIT {
 
@@ -18,6 +14,7 @@ public class RegistryWsGuiceIT {
   public static void testGetDataset() {
     DatasetService ds = RegistryWsClientFactoryGuice.webserviceClientReadOnly().getInstance(DatasetService.class);
     Dataset dataset = ds.get(UUID.fromString("1edcfe6d-da55-4d59-b30e-468cd21f8b0b"));
+    dataset.getEndpoints();
     System.out.println(dataset.getTitle());
     
   }
