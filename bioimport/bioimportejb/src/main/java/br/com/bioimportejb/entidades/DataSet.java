@@ -1,10 +1,14 @@
 package br.com.bioimportejb.entidades;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="biotecmar.dataset")
@@ -18,6 +22,10 @@ public class DataSet implements Serializable{
 	private String uuid;
 	
 	private String descricao;
+	
+	@Column(name="data_alt")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Calendar dataAlt;
 
 	public String getUuid() {
 		return uuid;
@@ -33,6 +41,24 @@ public class DataSet implements Serializable{
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Calendar getDataAlt() {
+		return dataAlt;
+	}
+
+	public void setDataAlt(Calendar dataAlt) {
+		this.dataAlt = dataAlt;
 	}
 
 	@Override

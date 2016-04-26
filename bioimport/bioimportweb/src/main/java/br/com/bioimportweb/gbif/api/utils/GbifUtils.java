@@ -43,7 +43,9 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.CSVReader;
 
 import br.com.bioimportejb.bean.SampleBean;
+import br.com.bioimportejb.bean.interfaces.DataSetLocal;
 import br.com.bioimportejb.bean.interfaces.TaxonLocal;
+import br.com.bioimportejb.entidades.DataSet;
 import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
 import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.entidades.Taxon;
@@ -75,7 +77,7 @@ public class GbifUtils implements Serializable {
 	
 	private TaxonLocal taxonLocal;
 	
-	public Collection<Sample> montarSamples(Archive arq) throws ExcecaoIntegracao {
+	public Collection<Sample> montarSamples(Archive arq, DataSet dataset) throws ExcecaoIntegracao {
 		CSVReader reader = null;
 		Map<ChaveSampleVO, Sample> samples = new HashMap<ChaveSampleVO, Sample>();
 		try {
@@ -85,6 +87,7 @@ public class GbifUtils implements Serializable {
 			 while (iterator.hasNext()) {
 				 	Record r = iterator.next();
 					Sample sample = new Sample();
+					sample.setDataSet(dataset);
 					ChaveSampleVO chave = new ChaveSampleVO();
 					BigDecimal latitude = null;
 					BigDecimal longitude = null;
@@ -224,20 +227,38 @@ public class GbifUtils implements Serializable {
 	}
 	
 	public void processarDataSet(String uuid) throws MalformedURLException, ExcecaoIntegracao {
-		DatasetService ds = RegistryWsClientFactoryGuice.webserviceClientReadOnly().getInstance(DatasetService.class);
-		Dataset dataset = ds.get(UUID.fromString(uuid));
-		Endpoint endPointDwcArquive = null;
-		for(Endpoint e : dataset.getEndpoints()) {
-			if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
-				endPointDwcArquive = e;
+		try {
+			DatasetService ds = RegistryWsClientFactoryGuice.webserviceClientReadOnly().getInstance(DatasetService.class);
+			Dataset dataset = ds.get(UUID.fromString(uuid));
+			
+			
+			Endpoint endPointDwcArquive = null;
+			Calendar data = Calendar.getInstance();
+			data.setTime(dataset.getPubDate());
+			
+			DataSetLocal datasetLocal = (DataSetLocal) 
+					new InitialContext().lookup("java:global/bioimportear/bioimportejb/DataSetBean");
+		
+			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
+			
+			if(atualizar) {
+				for(Endpoint e : dataset.getEndpoints()) {
+					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
+						endPointDwcArquive = e;
+					}
+				}
+				
+				DataSet datasetSistema = datasetLocal.buscarPorUuid(uuid);
+				datasetSistema.setDataAlt(data);
+				datasetLocal.salvar(datasetSistema);
+				processaZip(endPointDwcArquive.getUrl().toURL(), datasetSistema);
 			}
+		} catch (NamingException e1) {
+			throw new ExcecaoIntegracao(e1);
 		}
-		
-		downloadZipFile(endPointDwcArquive.getUrl().toURL());
-		
 	}
 	
-	public void downloadZipFile(URL url) throws ExcecaoIntegracao {
+	public void processaZip(URL url, DataSet dataset) throws ExcecaoIntegracao {
 	    
 	    try {
 	    	String diretorioTmp = getProp().getProperty("diretorio.temporario");
@@ -267,11 +288,10 @@ public class GbifUtils implements Serializable {
 	        Archive arq = ArchiveFactory.openArchive(fileOcorrencias);
 	        
 	        
-			Collection<Sample> samples = montarSamples(arq);
+			Collection<Sample> samples = montarSamples(arq, dataset);
 			gravarSamples(samples);
 			
 			new File(nomeDiretorio).delete();
-	        
 	        
 	    } catch (IOException e) {
 	        log.error(e.getMessage(), e);

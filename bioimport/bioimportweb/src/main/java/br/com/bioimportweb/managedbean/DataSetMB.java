@@ -1,6 +1,7 @@
 package br.com.bioimportweb.managedbean;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import org.primefaces.event.RowEditEvent;
 import br.com.bioimportejb.bean.interfaces.DataSetLocal;
 import br.com.bioimportejb.entidades.DataSet;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
+import br.com.bioimportweb.gbif.api.utils.GbifUtils;
+import br.com.bioimportweb.util.Util;
 
 @ViewScoped
 @ManagedBean
@@ -48,6 +51,18 @@ public class DataSetMB implements Serializable {
         	dataSetLocal.salvar(d);
         }
     }
+	
+	public String processarImportacao() throws ExcecaoIntegracao {
+		try {
+			List<DataSet> lista = dataSetLocal.listarDataSet();
+			for(DataSet d : lista) {
+				GbifUtils.getInstance().processarDataSet(d.getUuid());
+			}
+		} catch (MalformedURLException e) {
+			Util.montaMensagemFlashRedirect("Erro ao formatar URL do DataSet", null);
+		}
+		return null;
+	}
 	
 	public List<DataSet> getLista() {
 		return lista;

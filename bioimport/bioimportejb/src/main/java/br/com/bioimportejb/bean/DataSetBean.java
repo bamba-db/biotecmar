@@ -1,6 +1,7 @@
 package br.com.bioimportejb.bean;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -66,5 +67,30 @@ public class DataSetBean implements DataSetLocal, Serializable{
 		}
 		
 		return d;
+	}
+
+	@Override
+	public boolean verificarAtualizacao(String uuid, Calendar data) throws ExcecaoIntegracao {
+		try {
+			Calendar dataDataSet = getDataSetDAO().buscarDataPorUuid(uuid);
+			if(dataDataSet == null) {
+				return true;
+			} else if(dataDataSet.before(data)) {
+				return true;
+			}
+			
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
+		return false;
+	}
+
+	@Override
+	public DataSet buscarPorUuid(String uuid) throws ExcecaoIntegracao {
+		try {
+			return getDataSetDAO().buscarPorUuid(uuid);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
 	}
 }
