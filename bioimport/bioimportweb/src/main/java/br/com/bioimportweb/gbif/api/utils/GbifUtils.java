@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +38,7 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.text.Archive;
 import org.gbif.dwc.text.ArchiveFactory;
+import org.gbif.dwc.text.ArchiveField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,10 +117,22 @@ public class GbifUtils implements Serializable {
 						}
 					}
 					
-					//TODO ver se há como recuperar a data
-					Date data = Calendar.getInstance().getTime();
-					sample.setDt(data);
-					chave.setData(data);
+					//TODO ver se há como recuperar a data, até então sistema grava a data do sample caso não tenha a data.
+					Date dataSample = null;
+					
+					if(arq.getCore().hasTerm(DwcTerm.eventDate)) {
+						String value = r.value(DwcTerm.eventDate);
+						if(StringUtils.isNotEmpty(value)) {
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							dataSample = sdf.parse(value);
+						}
+					}
+					
+					if(dataSample == null) {
+						dataSample = dataset.getDataAlt().getTime();
+					}
+					sample.setDt(dataSample);
+					chave.setData(dataSample);
 					
 					Sample aux = samples.get(chave);
 					if(aux != null) {
@@ -207,6 +221,9 @@ public class GbifUtils implements Serializable {
 		} catch (NamingException e1) {
 			log.error(e1.getMessage(), e1);
 			throw new ExcecaoIntegracao(e1);
+		} catch (ParseException e) {
+			log.error(e.getMessage(), e);
+			throw new ExcecaoIntegracao(e);
 		} finally {
 			if(reader != null) {
 				try {
