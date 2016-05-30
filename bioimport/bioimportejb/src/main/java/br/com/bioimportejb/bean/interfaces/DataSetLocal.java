@@ -19,6 +19,8 @@ public interface DataSetLocal {
 
 	boolean verificarAtualizacao(String uuid, Calendar data) throws ExcecaoIntegracao;
 
-	DataSet buscarPorUuid(String uuid) throws ExcecaoIntegracao;;
+	DataSet buscarPorUuid(String uuid) throws ExcecaoIntegracao;
+
+	void remover(Long id) throws ExcecaoIntegracao;
 
 }

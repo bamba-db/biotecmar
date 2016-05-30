@@ -12,4 +12,6 @@ public interface DataSetDAO extends DAOGenerico<DataSet, String>{
 
 	DataSet buscarPorUuid(String uuid) throws ExcecaoGenerica;
 
+	void excluirPorId(Long id) throws ExcecaoGenerica;
+
 }

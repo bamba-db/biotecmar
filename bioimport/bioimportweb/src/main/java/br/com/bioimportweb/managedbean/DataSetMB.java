@@ -10,8 +10,8 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.CellEditEvent;
-import org.primefaces.event.RowEditEvent;
 
 import br.com.bioimportejb.bean.interfaces.DataSetLocal;
 import br.com.bioimportejb.entidades.DataSet;
@@ -20,7 +20,7 @@ import br.com.bioimportweb.gbif.api.utils.GbifUtils;
 import br.com.bioimportweb.util.Util;
 
 @ViewScoped
-@ManagedBean
+@ManagedBean(name="dataSetMB")
 public class DataSetMB implements Serializable {
 
 	private static final long serialVersionUID = 8681865857427040369L;
@@ -35,20 +35,27 @@ public class DataSetMB implements Serializable {
 		lista = dataSetLocal.listarDataSet();
 	}
 
-	public void adicionarDataSet() {
+	public void adicionarDataSet() throws ExcecaoIntegracao {
 		List<DataSet> listaAntiga = new ArrayList<DataSet>(lista);
 		lista.clear();
 		DataSet d = new DataSet();
-		d.setDescricao("0000");
-		d.setUuid("0000");
+		d.setDescricao("0");
+		d.setUuid("0");
+		d = dataSetLocal.salvar(d);
 		lista.add(d);
 		lista.addAll(listaAntiga);
 	}
 	
 	public void onRowEdit(CellEditEvent event) throws ExcecaoIntegracao {
-        DataSet d = lista.get(((Integer) event.getRowIndex()));
-        if(d.getUuid() != null) {
-        	dataSetLocal.salvar(d);
+        Integer index = (Integer) event.getRowIndex();
+		DataSet d = lista.get(index);
+        if(StringUtils.isNotEmpty(d.getUuid())) {
+        	d = dataSetLocal.salvar(d);
+        } else {
+        	lista.remove(index);
+        	if(d.getId() != null) {
+        		dataSetLocal.remover(d.getId());
+        	}
         }
     }
 	

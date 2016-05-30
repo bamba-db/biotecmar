@@ -11,6 +11,7 @@ import br.com.bioimportejb.bean.interfaces.TaxonLocal;
 import br.com.bioimportejb.dao.TaxonDAO;
 import br.com.bioimportejb.entidades.Taxon;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
+import br.com.bioimportejb.util.ChaveTaxonVO;
 import br.com.daofabrica.excecoes.ExcecaoGenerica;
 import br.com.daofabrica.fabrica.DAOFabrica;
 import br.com.daofabrica.fabrica.DAOFabricaImpl;
@@ -47,6 +48,15 @@ public class TaxonBean implements TaxonLocal, Serializable{
 	public Taxon salvar(Taxon dTaxon) throws ExcecaoIntegracao {
 		try {
 			return getTaxonDAO().salvar(dTaxon);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
+	}
+
+	@Override
+	public Taxon buscarPorChaveTaxon(ChaveTaxonVO chaveTaxonVO) throws ExcecaoIntegracao {
+		try {
+			return getTaxonDAO().buscarPorChaveTaxon(chaveTaxonVO);
 		} catch (ExcecaoGenerica e) {
 			throw new ExcecaoIntegracao(e);
 		}

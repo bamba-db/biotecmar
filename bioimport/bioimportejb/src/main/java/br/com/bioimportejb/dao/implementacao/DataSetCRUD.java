@@ -41,4 +41,19 @@ public class DataSetCRUD extends CRUDGenerico<DataSet, String> implements DataSe
 			throw new ExcecaoGenerica(e);
 		}
 	}
+
+	@Override
+	public void excluirPorId(Long id) throws ExcecaoGenerica {
+		try {
+			StringBuilder hql = new StringBuilder();
+			hql.append("delete from DataSet where id= :id");
+			Query query = criarQuery(hql.toString());
+			query.setParameter("id", id);
+			query.executeUpdate();
+		} catch (HibernateException e) {
+			throw new ExcecaoGenerica(e);
+		}
+	}
+	
+	
 }

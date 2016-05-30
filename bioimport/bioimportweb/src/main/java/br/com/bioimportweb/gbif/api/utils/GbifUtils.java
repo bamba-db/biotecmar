@@ -2,11 +2,9 @@ package br.com.bioimportweb.gbif.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -20,8 +18,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -38,7 +38,6 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.text.Archive;
 import org.gbif.dwc.text.ArchiveFactory;
-import org.gbif.dwc.text.ArchiveField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.entidades.Taxon;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.bioimportejb.util.ChaveSampleVO;
-import br.com.bioimportweb.managedbean.ImportacaoCsv;
+import br.com.bioimportejb.util.ChaveTaxonVO;
 import br.com.bioimportweb.util.Util;
 
 public class GbifUtils implements Serializable {
@@ -145,10 +144,6 @@ public class GbifUtils implements Serializable {
 			    	 * E verifica se já recuperou algum dado taxonômico com o mesmo taxonkey
 			    	 * Caso já exista recupera do Map, caso não cria um novo para sua persistência.
 			    	 */
-			    	String taxonkey = null;
-			    	if(arq.getCore().hasTerm(DwcTerm.identificationQualifier)) {
-			    		taxonkey = r.value(DwcTerm.identificationQualifier);
-			    	}
 			    	
 			    	Taxon dTaxon = null;
 			    	
@@ -161,54 +156,75 @@ public class GbifUtils implements Serializable {
 //						dTaxon = taxonLocal.buscarPorTaxonKey(taxonkey);
 //			    	}  
 			    	
+			    	ChaveTaxonVO chaveTaxonVO = new ChaveTaxonVO();
+			    	if(arq.getCore().hasTerm(DwcTerm.kingdom)) {
+			    		chaveTaxonVO.setKingdom(r.value(DwcTerm.kingdom));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.phylum)) {
+			    		chaveTaxonVO.setPhylum(r.value(DwcTerm.phylum));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.class_)) {
+			    		chaveTaxonVO.setClass_(r.value(DwcTerm.class_));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.order)) {
+			    		chaveTaxonVO.setOrder(r.value(DwcTerm.order));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.family)) {
+			    		chaveTaxonVO.setFamily(r.value(DwcTerm.family));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.order)) {
+			    		chaveTaxonVO.setGenus(r.value(DwcTerm.order));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.scientificName)) {
+			    		chaveTaxonVO.setSpecies(r.value(DwcTerm.scientificName));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.infraspecificEpithet)) {
+			    		chaveTaxonVO.setInfraspecificepithet(r.value(DwcTerm.infraspecificEpithet));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.taxonRank)) {
+			    		chaveTaxonVO.setTaxonrank(r.value(DwcTerm.taxonRank));
+			    	}
+			    	
+			    	if(arq.getCore().hasTerm(DwcTerm.scientificName)) {
+			    		chaveTaxonVO.setScientificname(r.value(DwcTerm.scientificName));
+			    	}
+			    	
+			    	dTaxon = taxonLocal.buscarPorChaveTaxon(chaveTaxonVO);
 			    	/**
 			    	 * Caso o taxon ainda não exista no banco de dados, o sistema grava as informações do novo taxon
 			    	 * encontrado.
 			    	 */
 			    	if(dTaxon == null) {
 			    		dTaxon = new Taxon();
-			    		dTaxon.setTaxonkey(taxonkey);
+			    		//dTaxon.setTaxonkey(taxonkey);
 			    	 
-			    	
-						if(arq.getCore().hasTerm(DwcTerm.kingdom)) {
-				    		dTaxon.setKingdom(r.value(DwcTerm.kingdom));
-				    	}
+			    		dTaxon.setKingdom(chaveTaxonVO.getKingdom());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.phylum)) {
-				    		dTaxon.setPhylum(r.value(DwcTerm.phylum));
-				    	}
+			    		dTaxon.setPhylum(chaveTaxonVO.getPhylum());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.class_)) {
-				    		dTaxon.setClass_(r.value(DwcTerm.class_));
-				    	}
+			    		dTaxon.setClass_(chaveTaxonVO.getClass_());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.order)) {
-				    		dTaxon.setOrder(r.value(DwcTerm.order));
-				    	}
+			    		dTaxon.setOrder(chaveTaxonVO.getOrder());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.family)) {
-				    		dTaxon.setFamily(r.value(DwcTerm.family));
-				    	}
+			    		dTaxon.setFamily(chaveTaxonVO.getFamily());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.order)) {
-				    		dTaxon.setGenus(r.value(DwcTerm.order));
-				    	}
+			    		dTaxon.setGenus(chaveTaxonVO.getGenus());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.scientificName)) {
-				    		dTaxon.setSpecies(r.value(DwcTerm.scientificName));
-				    	}
+			    		dTaxon.setSpecies(chaveTaxonVO.getSpecies());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.infraspecificEpithet)) {
-				    		dTaxon.setInfraspecificepithet(r.value(DwcTerm.infraspecificEpithet));
-				    	}
+			    		dTaxon.setInfraspecificepithet(chaveTaxonVO.getInfraspecificepithet());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.taxonRank)) {
-				    		dTaxon.setTaxonrank(r.value(DwcTerm.taxonRank));
-				    	}
+			    		dTaxon.setTaxonrank(chaveTaxonVO.getTaxonrank());
 				    	
-				    	if(arq.getCore().hasTerm(DwcTerm.scientificName)) {
-				    		dTaxon.setScientificname(r.value(DwcTerm.scientificName));
-				    	}
+			    		dTaxon.setScientificname(chaveTaxonVO.getScientificname());
 				    	
 				    	dTaxon = taxonLocal.salvar(dTaxon);
 			    	} 

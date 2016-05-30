@@ -16,8 +16,10 @@
 			</p:commandLink>
 		</div>
 		<p:outputPanel id="tabelaDataSet">
-			<p:dataTable value="#{dataSetMB.lista}" var="d" editable="true" editMode="cell" widgetVar="cellTable" styleClass="table table-striped">
-				<p:ajax event="cellEdit" listener="#{dataSetMB.onRowEdit}" update=":form:msgs" global="false"/>
+			<p:remoteCommand name="onCellEdit" update=":form:tabelaDataSet" />
+			<p:dataTable id="dataTableDataSet" value="#{dataSetMB.lista}" var="d" editable="true" editMode="cell" widgetVar="cellTable" styleClass="table table-striped">
+				
+				<p:ajax event="cellEdit" listener="#{dataSetMB.onRowEdit}" global="false"/>
 				<p:column headerText="UUID" style="text-align: center;">
 	              <p:cellEditor>
 	                  <f:facet name="output"><h:outputText value="#{d.uuid}" id="uuidOutput"/></f:facet>
@@ -25,13 +27,13 @@
 	                  	<p:inputText id="uuidInput" value="#{d.uuid}" style="width: 100%;"/>
 
 	                  </f:facet>
-		              </p:cellEditor>
+		           </p:cellEditor>
 	          	</p:column>
 				<p:column headerText="Descrição" style="text-align: center;">
 	              <p:cellEditor>
 	                  <f:facet name="output"><h:outputText value="#{d.descricao}" /></f:facet>
 	                  <f:facet name="input"><p:inputText id="descricaoInput" value="#{d.descricao}" style="width: 100%;"/></f:facet>
-		              </p:cellEditor>
+		           </p:cellEditor>
 	          	</p:column>
 			
 			</p:dataTable>

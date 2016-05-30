@@ -93,4 +93,13 @@ public class DataSetBean implements DataSetLocal, Serializable{
 			throw new ExcecaoIntegracao(e);
 		}
 	}
+
+	@Override
+	public void remover(Long id) throws ExcecaoIntegracao {
+		try {
+			getDataSetDAO().excluirPorId(id);
+		} catch (ExcecaoGenerica e) {
+			throw new ExcecaoIntegracao(e);
+		}
+	}
 }
