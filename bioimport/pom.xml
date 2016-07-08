@@ -6,6 +6,7 @@
   <version>1.0.0.0</version>
   <packaging>pom</packaging>
   
+  
   <dependencyManagement>
   	<dependencies>
 	  	<dependency>
@@ -44,6 +45,7 @@
 			<version>1.18</version>
 		</dependency>
 		
+		
   	</dependencies>
   </dependencyManagement>
   
@@ -59,7 +61,7 @@
   	<modulo.web>bioimportweb</modulo.web>
   	<modulo.ejb>bioimportejb</modulo.ejb>
   	<modulo.ear>bioimportear</modulo.ear>
-  	<gbif-api.version>0.37</gbif-api.version>
+  	<gbif-api.version>0.38</gbif-api.version>
   	<gbif-common-ws.version>0.31</gbif-common-ws.version>
   	<junit.version>4.12</junit.version>
   </properties>
@@ -117,6 +119,16 @@
             <url>http://repository.prime.com.tr</url>
             <layout>default</layout>
         </repository>
+       
+	    <repository>
+      		<id>gbif-all</id>
+      		<url>http://repository.gbif.org/content/groups/gbif</url>
+    	</repository>
+	    
+	     <repository>
+      		<id>gbif-central</id>
+      		<url>http://repository.gbif.org/content/repositories/central/</url>
+    	</repository>
     </repositories>
     
   <modules>

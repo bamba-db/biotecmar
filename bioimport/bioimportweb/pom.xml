@@ -180,21 +180,15 @@
 		
 		<dependency>
 			<groupId>org.gbif</groupId>
-			<artifactId>gbif-api</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>validation-api</artifactId>
-					<groupId>javax.validation</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>		
-		<dependency>
-			<groupId>org.gbif</groupId>
 			<artifactId>gbif-common-ws</artifactId>
 			<exclusions>
 				<exclusion>
 					<artifactId>validation-api</artifactId>
 					<groupId>javax.validation</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-core-asl</artifactId>
+					<groupId>org.codehaus.jackson</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -207,7 +201,10 @@
 		<dependency>
 			<groupId>org.gbif</groupId>
 			<artifactId>dwca-reader</artifactId>
+			
 		</dependency>
+		
+		
     </dependencies>
  
  

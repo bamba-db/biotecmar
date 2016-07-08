@@ -2,12 +2,16 @@ package br.com.bioimportejb.entidades;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,15 +24,22 @@ public class DataSet implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id_dataset")
 	private Long id;	
 	
 	private String uuid;
 	
 	private String descricao;
 	
+	@OneToMany(mappedBy="dataSet", cascade=CascadeType.ALL)
+	private List<Contact> contatos;
+	
 	@Column(name="data_alt")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Calendar dataAlt;
+	
+	@Column(name="pub_date")
+	private Date pubDate;
 
 	public String getUuid() {
 		return uuid;
@@ -87,6 +98,22 @@ public class DataSet implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public List<Contact> getContatos() {
+		return contatos;
+	}
+
+	public void setContatos(List<Contact> contatos) {
+		this.contatos = contatos;
+	}
+
+	public Date getPubDate() {
+		return pubDate;
+	}
+
+	public void setPubDate(Date pubDate) {
+		this.pubDate = pubDate;
 	}
 	
 }

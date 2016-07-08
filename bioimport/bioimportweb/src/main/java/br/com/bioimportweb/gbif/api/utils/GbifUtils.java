@@ -18,10 +18,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -30,9 +29,13 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.gbif.api.model.registry.Contact;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.api.model.registry.Endpoint;
+import org.gbif.api.service.registry.ContactService;
 import org.gbif.api.service.registry.DatasetService;
+import org.gbif.api.service.registry.NetworkEntityService;
+import org.gbif.api.service.registry.NetworkService;
 import org.gbif.api.vocabulary.EndpointType;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DwcTerm;
@@ -262,7 +265,10 @@ public class GbifUtils implements Serializable {
 	public void processarDataSet(String uuid) throws MalformedURLException, ExcecaoIntegracao {
 		try {
 			DatasetService ds = RegistryWsClientFactoryGuice.webserviceClientReadOnly().getInstance(DatasetService.class);
-			Dataset dataset = ds.get(UUID.fromString(uuid));
+			UUID uuidString = UUID.fromString(uuid);
+			Dataset dataset = ds.get(uuidString);
+			InputStream metadataDocument = ds.getMetadataDocument(uuidString);
+			
 			
 			
 			Endpoint endPointDwcArquive = null;
@@ -274,10 +280,15 @@ public class GbifUtils implements Serializable {
 		
 			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
 			
+			Endpoint endPointEml = null;
 			if(atualizar) {
 				for(Endpoint e : dataset.getEndpoints()) {
 					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
 						endPointDwcArquive = e;
+					}
+					
+					if(EndpointType.EML.equals(e.getType())) {
+						endPointEml = e;
 					}
 				}
 				

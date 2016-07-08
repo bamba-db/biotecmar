@@ -58,6 +58,18 @@
 			<version>2.5.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.gbif</groupId>
+			<artifactId>gbif-api</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>validation-api</artifactId>
+					<groupId>javax.validation</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		
     </dependencies>
     <packaging>ejb</packaging>
 </project>
