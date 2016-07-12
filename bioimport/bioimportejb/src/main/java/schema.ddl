@@ -61,7 +61,7 @@
         modifiedBy varchar(255),
         organization varchar(255),
         postalCode varchar(255),
-        primary_ boolean,
+        primary_ bool,
         province varchar(255),
         type_ varchar(255),
         id_dataset int8,
@@ -69,12 +69,36 @@
     );
 
     create table biotecmar.dataset (
-        id_dataset  bigserial not null,
-        data_alt timestamp,
-        descricao varchar(255),
-        pub_date timestamp,
-        uuid varchar(255),
-        primary key (id_dataset)
+       alter table biotecmar.dataset add column  id_dataset  bigserial not null,
+       alter table biotecmar.dataset add column  abbreviation varchar(255),
+       alter table biotecmar.dataset add column  additionalInfo varchar(255),
+       alter table biotecmar.dataset add column  alias varchar(255),
+       alter table biotecmar.dataset add column  created timestamp,
+       alter table biotecmar.dataset add column  create_by varchar(255),
+       alter table biotecmar.dataset add column  data_alt timestamp,
+       alter table biotecmar.dataset add column  deleted timestamp,
+       alter table biotecmar.dataset add column  descricao varchar(255),
+       alter table biotecmar.dataset add column  description varchar(255),
+       alter table biotecmar.dataset add column  duplicate_of_dataset_key varchar(255),
+       alter table biotecmar.dataset add column  external_ bool,
+       alter table biotecmar.dataset add column  geographic_coverage_desc varchar(255),
+       alter table biotecmar.dataset add column  homepage varchar(255),
+       alter table biotecmar.dataset add column  installation_key varchar(255),
+       alter table biotecmar.dataset add column  language_ varchar(255),
+       alter table biotecmar.dataset add column  modified timestamp,
+       alter table biotecmar.dataset add column  modified_by varchar(255),
+       alter table biotecmar.dataset add column  num_constituents int4,
+       alter table biotecmar.dataset add column  parent_dataset_key varchar(255),
+       alter table biotecmar.dataset add column  project varchar(255),
+       alter table biotecmar.dataset add column  pub_date timestamp,
+       alter table biotecmar.dataset add column  publishing_organization_key varchar(255),
+       alter table biotecmar.dataset add column  purpose varchar(255),
+       alter table biotecmar.dataset add column  rights varchar(255),
+       alter table biotecmar.dataset add column  sub_type varchar(255),
+       alter table biotecmar.dataset add column  title varchar(255),
+       alter table biotecmar.dataset add column  type_ varchar(255),
+       alter table biotecmar.dataset add column  uuid varchar(255),
+       alter table biotecmar.dataset add column  primary key (id_dataset)
     );
 
     create table biotecmar.email (
@@ -92,11 +116,22 @@
     );
 
     create table biotecmar.fish_assembly_analysis (
-        id int4 not null,
+        id int4 not null unique,
         abundance numeric(19, 2),
         id_sample int8,
         id_taxon int8,
         primary key (id)
+    );
+
+    create table biotecmar.geospatial_coverage (
+        id_geospatial_coverage int8 not null,
+        global_coverage bool,
+        max_latitude float8,
+        max_longitude float8,
+        min_latitude float8,
+        min_longitude float8,
+        id_dataset int8,
+        primary key (id_geospatial_coverage)
     );
 
     create table biotecmar.metagenome_functional_analysis (
@@ -142,7 +177,7 @@
     );
 
     create table biotecmar.sample (
-        id int8 not null,
+        id int8 not null unique,
         depth numeric(19, 2),
         dt date,
         environment varchar(255),
@@ -160,7 +195,7 @@
     );
 
     create table biotecmar.taxon (
-        id_taxon int8 not null,
+        id_taxon int8 not null unique,
         class varchar(255),
         family varchar(255),
         genus varchar(255),
@@ -182,70 +217,87 @@
         primary key (id_telefone)
     );
 
+    create table biotecmar.temporal_coverage (
+        id_temporal_coverage int8 not null,
+        temporal_format varchar(255),
+        id_dataset int8,
+        primary key (id_temporal_coverage)
+    );
+
     alter table biotecmar.contact 
-        add constraint FK_j1pfbalpkwboqfa1xncywotf7 
+        add constraint FKA6BC8B4661E25B82 
         foreign key (id_dataset) 
         references biotecmar.dataset;
 
     alter table biotecmar.email 
-        add constraint FK_67170amqm44jmm77a5p3i71k4 
+        add constraint FK882344422745B4FC 
         foreign key (id_contato) 
         references biotecmar.contact;
 
     alter table biotecmar.endereco 
-        add constraint FK_s9qsdk3543ghmtn2m9wd8gs33 
+        add constraint FKB9D4E5632745B4FC 
         foreign key (id_contato) 
         references biotecmar.contact;
 
     alter table biotecmar.fish_assembly_analysis 
-        add constraint FK_63dug7q58sa7hikiloe7iiw9d 
+        add constraint FK92A10B0880A66262 
         foreign key (id_sample) 
         references biotecmar.sample;
 
     alter table biotecmar.fish_assembly_analysis 
-        add constraint FK_ssqbih78uq1mgt54fxwvsb9ae 
+        add constraint FK92A10B0856D78CC6 
         foreign key (id_taxon) 
         references biotecmar.taxon;
 
+    alter table biotecmar.geospatial_coverage 
+        add constraint FKD3341A3A61E25B82 
+        foreign key (id_dataset) 
+        references biotecmar.dataset;
+
     alter table biotecmar.metagenome_functional_analysis 
-        add constraint FK_8pv5hbver7h8ker6o3pbnxeiw 
+        add constraint FKA3056E2FA2031DF0 
         foreign key (id_meta_analysis) 
         references biotecmar.metagenomic_analysis;
 
     alter table biotecmar.metagenome_functional_analysis 
-        add constraint FK_ko90qaxpy6hr9dps5ds089pan 
+        add constraint FKA3056E2F6F43B287 
         foreign key (reference_db_id) 
         references biotecmar.reference_db;
 
     alter table biotecmar.metagenome_taxonomic_analysis 
-        add constraint FK_lt7r5k3o4ead2cmjtw0huynyr 
+        add constraint FK73ABA9C2A2031DF0 
         foreign key (id_meta_analysis) 
         references biotecmar.metagenomic_analysis;
 
     alter table biotecmar.pagina_contato 
-        add constraint FK_9xh91qxa2twlb6q9ep5k01y9w 
+        add constraint FKFC8D608B2745B4FC 
         foreign key (id_contato) 
         references biotecmar.contact;
 
     alter table biotecmar.posicao_contato 
-        add constraint FK_ab0bq49h7313xrffj1jaf0wjj 
+        add constraint FKE2F0752D2745B4FC 
         foreign key (id_contato) 
         references biotecmar.contact;
 
     alter table biotecmar.sample 
-        add constraint FK_ko4yjfkmxh3foltx9m0jq9om3 
+        add constraint FK938591C461E25B82 
         foreign key (id_dataset) 
         references biotecmar.dataset;
 
     alter table biotecmar.sample 
-        add constraint FK_ak52ljv8tc4huqbbjcf9rvwhi 
+        add constraint FK938591C4A07C9A8 
         foreign key (type) 
         references biotecmar.sample_type;
 
     alter table biotecmar.telefone 
-        add constraint FK_fhbhsfenx14euecvb4np9x86d 
+        add constraint FK18FE8842745B4FC 
         foreign key (id_contato) 
         references biotecmar.contact;
+
+    alter table biotecmar.temporal_coverage 
+        add constraint FK6A99560B61E25B82 
+        foreign key (id_dataset) 
+        references biotecmar.dataset;
 
     create sequence biotecmar.fish_assembly_analysis_id_seq;
 

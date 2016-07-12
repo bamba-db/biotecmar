@@ -31,13 +31,14 @@
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-			<property name="hibernate.hbm2ddl.auto" value="update"/>
-			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false" />
-			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/biotecmar"/>
 			
-			<property name="hibernate.connection.username" value="biotecmar"/>
-			<property name="hibernate.connection.password" value="biotecmar@123"/>
+			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false" />
+<!-- 			<property name="hibernate.hbm2ddl.auto" value="update"/> -->
+<!-- 			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/> -->
+<!-- 			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/biotecmar"/> -->
+			
+<!-- 			<property name="hibernate.connection.username" value="biotecmar"/> -->
+<!-- 			<property name="hibernate.connection.password" value="biotecmar@123"/> -->
 			
 		</properties>
 		
