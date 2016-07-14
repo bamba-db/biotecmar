@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -18,7 +19,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -32,10 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.gbif.api.model.registry.Contact;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.api.model.registry.Endpoint;
-import org.gbif.api.service.registry.ContactService;
+import org.gbif.api.model.registry.eml.geospatial.BoundingBox;
 import org.gbif.api.service.registry.DatasetService;
-import org.gbif.api.service.registry.NetworkEntityService;
-import org.gbif.api.service.registry.NetworkService;
 import org.gbif.api.vocabulary.EndpointType;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DwcTerm;
@@ -50,9 +48,16 @@ import br.com.bioimportejb.bean.SampleBean;
 import br.com.bioimportejb.bean.interfaces.DataSetLocal;
 import br.com.bioimportejb.bean.interfaces.TaxonLocal;
 import br.com.bioimportejb.entidades.DataSet;
+import br.com.bioimportejb.entidades.Email;
+import br.com.bioimportejb.entidades.Endereco;
 import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
+import br.com.bioimportejb.entidades.GeospatialCoverage;
+import br.com.bioimportejb.entidades.PaginaContato;
+import br.com.bioimportejb.entidades.PosicaoContato;
 import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.entidades.Taxon;
+import br.com.bioimportejb.entidades.Telefone;
+import br.com.bioimportejb.entidades.TemporalCoverage;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 import br.com.bioimportejb.util.ChaveSampleVO;
 import br.com.bioimportejb.util.ChaveTaxonVO;
@@ -267,8 +272,6 @@ public class GbifUtils implements Serializable {
 			DatasetService ds = RegistryWsClientFactoryGuice.webserviceClientReadOnly().getInstance(DatasetService.class);
 			UUID uuidString = UUID.fromString(uuid);
 			Dataset dataset = ds.get(uuidString);
-			InputStream metadataDocument = ds.getMetadataDocument(uuidString);
-			
 			
 			
 			Endpoint endPointDwcArquive = null;
@@ -280,26 +283,169 @@ public class GbifUtils implements Serializable {
 		
 			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
 			
-			Endpoint endPointEml = null;
 			if(atualizar) {
 				for(Endpoint e : dataset.getEndpoints()) {
 					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
 						endPointDwcArquive = e;
 					}
 					
-					if(EndpointType.EML.equals(e.getType())) {
-						endPointEml = e;
-					}
+
 				}
 				
 				DataSet datasetSistema = datasetLocal.buscarPorUuid(uuid);
-				datasetSistema.setDataAlt(data);
+				converterDataSet(dataset, data, datasetSistema);
 				datasetLocal.salvar(datasetSistema);
 				processaZip(endPointDwcArquive.getUrl().toURL(), datasetSistema);
 			}
 		} catch (NamingException e1) {
 			throw new ExcecaoIntegracao(e1);
 		}
+	}
+	private void converterDataSet(Dataset dataset, Calendar data, DataSet datasetSistema) {
+		datasetSistema.setAbbreviation(dataset.getAbbreviation());
+		datasetSistema.setAdditionalInfo(dataset.getAdditionalInfo());
+		datasetSistema.setAlias(dataset.getAlias());
+		ArrayList<br.com.bioimportejb.entidades.Contact> contatos = new ArrayList<br.com.bioimportejb.entidades.Contact>();
+		
+		converterContatos(dataset, datasetSistema, contatos);
+		datasetSistema.setCreated(dataset.getCreated());
+		datasetSistema.setCreatedBy(dataset.getCreatedBy());
+		datasetSistema.setDeleted(dataset.getDeleted()); ;
+		datasetSistema.setDescription(dataset.getDescription()); 
+		if (dataset.getDuplicateOfDatasetKey() != null) {
+			datasetSistema.setDuplicateOfDatasetKey(dataset.getDuplicateOfDatasetKey().toString());
+		}
+		datasetSistema.setExternal(dataset.isExternal()); 
+		datasetSistema.setGeographicCoverageDescription(dataset.getGeographicCoverageDescription()); 
+		converterGeospatial(dataset, datasetSistema); 
+		if (dataset.getHomepage() != null) {
+			datasetSistema.setHomepage(dataset.getHomepage().toString());
+		}
+		if (dataset.getInstallationKey() != null) {
+			datasetSistema.setInstallationKey(dataset.getInstallationKey().toString());
+		}
+		if (dataset.getLanguage() != null) {
+			datasetSistema.setLanguage(dataset.getLanguage().toString());
+		}
+		datasetSistema.setModified(dataset.getModified()); 
+		datasetSistema.setModifiedBy(dataset.getModifiedBy()); 
+		datasetSistema.setNumConstituents(dataset.getNumConstituents()); 
+		if (dataset.getParentDatasetKey() != null) {
+			datasetSistema.setParentDatasetKey(dataset.getParentDatasetKey().toString());
+		}
+		if (dataset.getProject() != null) {
+			datasetSistema.setProject(dataset.getProject().getTitle());
+		}
+		datasetSistema.setPubDate(dataset.getPubDate());
+		if (dataset.getPublishingOrganizationKey() != null) {
+			datasetSistema.setPublishingOrganizationKey(dataset.getPublishingOrganizationKey().toString());
+		}
+		datasetSistema.setPurpose(dataset.getPurpose());
+		datasetSistema.setRights(dataset.getRights());
+		if (dataset.getSubtype() != null) {
+			datasetSistema.setSubtype(dataset.getSubtype().name());
+		}
+		ArrayList<TemporalCoverage> temporalCoverages = new ArrayList<TemporalCoverage>();
+		for(org.gbif.api.model.registry.eml.temporal.TemporalCoverage t : dataset.getTemporalCoverages()) {
+			Collection<String> keywords = t.toKeywords();
+			StringBuilder tempWords = new StringBuilder();
+			if(keywords != null && !keywords.isEmpty()) {
+				TemporalCoverage temporalCoverage = new TemporalCoverage();
+				temporalCoverage.setDataSet(datasetSistema);
+			
+				for(String k : keywords) {
+					tempWords.append(k);
+					tempWords.append(";");
+				}
+				temporalCoverage.setTemporalFormat(tempWords.toString());
+				temporalCoverages.add(temporalCoverage);
+			}
+			
+		}
+		datasetSistema.setTemporalCoverages(temporalCoverages);
+		datasetSistema.setTitle(dataset.getTitle());
+		if (dataset.getType() != null) {
+			datasetSistema.setType(dataset.getType().name());
+		}
+		datasetSistema.setDataAlt(data);
+	}
+	private void converterGeospatial(Dataset dataset, DataSet datasetSistema) {
+		ArrayList<GeospatialCoverage> geographicCoverages = new ArrayList<GeospatialCoverage>();
+		for(org.gbif.api.model.registry.eml.geospatial.GeospatialCoverage geoCover : dataset.getGeographicCoverages()) {
+			BoundingBox boundingBox = geoCover.getBoundingBox();
+			if(boundingBox != null) {
+				GeospatialCoverage geospatialCoverage = new GeospatialCoverage();
+				geospatialCoverage.setGlobalCoverage(boundingBox.isGlobalCoverage());
+				geospatialCoverage.setMaxLatitude(boundingBox.getMaxLatitude());
+				geospatialCoverage.setMaxLongitude(boundingBox.getMaxLongitude());
+				geospatialCoverage.setMinLatitude(boundingBox.getMinLatitude());
+				geospatialCoverage.setMinLongitude(boundingBox.getMinLongitude());
+				geographicCoverages.add(geospatialCoverage);
+			}
+		}
+		datasetSistema.setGeographicCoverages(geographicCoverages);
+	}
+	private void converterContatos(Dataset dataset, DataSet datasetSistema,
+			ArrayList<br.com.bioimportejb.entidades.Contact> contatos) {
+		for(Contact c : dataset.getContacts()) {
+			br.com.bioimportejb.entidades.Contact contact = new br.com.bioimportejb.entidades.Contact();
+			ArrayList<Endereco> address = new ArrayList<br.com.bioimportejb.entidades.Endereco>();
+			for(String a : c.getAddress()) {
+				Endereco e = new Endereco();
+				e.setEndereco(a);
+				address.add(e);
+			}
+			contact.setAddress(address);
+			contact.setCity(c.getCity());
+			contact.setCountry(c.getCountry().name());
+			contact.setCreated(c.getCreated());
+			contact.setCreatedBy(c.getCreatedBy());
+			contact.setDataSet(datasetSistema);
+			contact.setDescription(c.getDescription());
+			ArrayList<Email> emails = new ArrayList<Email>();
+			for(String e : c.getEmail()) {
+				Email email = new Email();
+				email.setEmail(e);
+				emails.add(email);
+			}
+			contact.setEmail(emails);
+			contact.setFirstName(c.getFirstName());
+			ArrayList<PaginaContato> paginasContato = new ArrayList<PaginaContato>();
+			for(URI hpage : c.getHomepage()) {
+				PaginaContato pc = new PaginaContato();
+				pc.setPagina(hpage.toString());
+				paginasContato.add(pc);
+			}
+			contact.setHomepage(paginasContato);
+			contact.setKey(c.getKey());
+			contact.setLastName(c.getLastName());
+			contact.setModified(c.getModified());
+			contact.setModifiedBy(c.getModifiedBy());
+			contact.setOrganization(c.getOrganization());
+			ArrayList<Telefone> telefones = new ArrayList<Telefone>();
+			for(String t : c.getPhone()) {
+				Telefone tel = new Telefone();
+				tel.setTelefone(t);
+				telefones.add(tel);
+			}
+			contact.setPhone(telefones);
+			ArrayList<PosicaoContato> posicoesContato = new ArrayList<PosicaoContato>();
+			for(String pos : c.getPosition()) {
+				PosicaoContato posicao = new PosicaoContato();
+				posicao.setPosicao(pos);
+				posicoesContato.add(posicao);
+			}
+			contact.setPosition(posicoesContato);
+			contact.setPostalCode(c.getPostalCode());
+			contact.setPrimary(c.isPrimary());
+			contact.setProvince(c.getProvince());
+			if (c.getType() != null) {
+				contact.setType(c.getType().name());
+			}
+			
+			
+		}
+		datasetSistema.setContatos(contatos);
 	}
 	
 	public void processaZip(URL url, DataSet dataset) throws ExcecaoIntegracao {

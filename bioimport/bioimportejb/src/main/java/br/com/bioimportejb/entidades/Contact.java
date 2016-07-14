@@ -47,9 +47,8 @@ public class Contact implements Serializable {
 	@Column(name="key_")
 	private Integer key;
 	
-	@Enumerated(EnumType.STRING)
 	@Column(name="type_")
-	private ContactType type;
+	private String type;
 	
 	@Column(name="primary_")
 	private Boolean primary;
@@ -80,8 +79,7 @@ public class Contact implements Serializable {
 	private String city;
 	private String province;
 	
-	@Enumerated(EnumType.STRING)
-	private Country country;
+	private String country;
 	private String postalCode;
 	private String createdBy;
 	private String modifiedBy;
@@ -108,11 +106,11 @@ public class Contact implements Serializable {
 		this.key = key;
 	}
 
-	public ContactType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(ContactType type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -212,11 +210,11 @@ public class Contact implements Serializable {
 		this.province = province;
 	}
 
-	public Country getCountry() {
+	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(Country country) {
+	public void setCountry(String country) {
 		this.country = country;
 	}
 
