@@ -281,8 +281,9 @@ public class GbifUtils implements Serializable {
 			DataSetLocal datasetLocal = (DataSetLocal) 
 					new InitialContext().lookup("java:global/bioimportear/bioimportejb/DataSetBean");
 		
-			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
 			
+			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
+			atualizar = true;
 			if(atualizar) {
 				for(Endpoint e : dataset.getEndpoints()) {
 					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {

@@ -69,36 +69,36 @@
     );
 
     create table biotecmar.dataset (
-       alter table biotecmar.dataset add column  id_dataset  bigserial not null,
-       alter table biotecmar.dataset add column  abbreviation varchar(255),
-       alter table biotecmar.dataset add column  additionalInfo varchar(255),
-       alter table biotecmar.dataset add column  alias varchar(255),
-       alter table biotecmar.dataset add column  created timestamp,
-       alter table biotecmar.dataset add column  create_by varchar(255),
-       alter table biotecmar.dataset add column  data_alt timestamp,
-       alter table biotecmar.dataset add column  deleted timestamp,
-       alter table biotecmar.dataset add column  descricao varchar(255),
-       alter table biotecmar.dataset add column  description varchar(255),
-       alter table biotecmar.dataset add column  duplicate_of_dataset_key varchar(255),
-       alter table biotecmar.dataset add column  external_ bool,
-       alter table biotecmar.dataset add column  geographic_coverage_desc varchar(255),
-       alter table biotecmar.dataset add column  homepage varchar(255),
-       alter table biotecmar.dataset add column  installation_key varchar(255),
-       alter table biotecmar.dataset add column  language_ varchar(255),
-       alter table biotecmar.dataset add column  modified timestamp,
-       alter table biotecmar.dataset add column  modified_by varchar(255),
-       alter table biotecmar.dataset add column  num_constituents int4,
-       alter table biotecmar.dataset add column  parent_dataset_key varchar(255),
-       alter table biotecmar.dataset add column  project varchar(255),
-       alter table biotecmar.dataset add column  pub_date timestamp,
-       alter table biotecmar.dataset add column  publishing_organization_key varchar(255),
-       alter table biotecmar.dataset add column  purpose varchar(255),
-       alter table biotecmar.dataset add column  rights varchar(255),
-       alter table biotecmar.dataset add column  sub_type varchar(255),
-       alter table biotecmar.dataset add column  title varchar(255),
-       alter table biotecmar.dataset add column  type_ varchar(255),
-       alter table biotecmar.dataset add column  uuid varchar(255),
-       alter table biotecmar.dataset add column  primary key (id_dataset)
+        id_dataset  bigserial not null,
+        abbreviation varchar(255),
+        additionalInfo varchar(255),
+        alias varchar(255),
+        created timestamp,
+        create_by varchar(255),
+        data_alt timestamp,
+        deleted timestamp,
+        descricao varchar(255),
+        description varchar(255),
+        duplicate_of_dataset_key varchar(255),
+        external_ bool,
+        geographic_coverage_desc varchar(255),
+        homepage varchar(255),
+        installation_key varchar(255),
+        language_ varchar(255),
+        modified timestamp,
+        modified_by varchar(255),
+        num_constituents int4,
+        parent_dataset_key varchar(255),
+        project varchar(255),
+        pub_date timestamp,
+        publishing_organization_key varchar(255),
+        purpose varchar(255),
+        rights varchar(255),
+        sub_type varchar(255),
+        title varchar(255),
+        type_ varchar(255),
+        uuid varchar(255),
+        primary key (id_dataset)
     );
 
     create table biotecmar.email (
@@ -124,7 +124,7 @@
     );
 
     create table biotecmar.geospatial_coverage (
-        id_geospatial_coverage int8 not null,
+        id_geospatial_coverage  bigserial not null,
         global_coverage bool,
         max_latitude float8,
         max_longitude float8,
@@ -218,7 +218,7 @@
     );
 
     create table biotecmar.temporal_coverage (
-        id_temporal_coverage int8 not null,
+        id_temporal_coverage  bigserial not null,
         temporal_format varchar(255),
         id_dataset int8,
         primary key (id_temporal_coverage)
