@@ -376,6 +376,7 @@ public class GbifUtils implements Serializable {
 			BoundingBox boundingBox = geoCover.getBoundingBox();
 			if(boundingBox != null) {
 				GeospatialCoverage geospatialCoverage = new GeospatialCoverage();
+				geospatialCoverage.setDataSet(datasetSistema);
 				geospatialCoverage.setGlobalCoverage(boundingBox.isGlobalCoverage());
 				geospatialCoverage.setMaxLatitude(boundingBox.getMaxLatitude());
 				geospatialCoverage.setMaxLongitude(boundingBox.getMaxLongitude());
@@ -444,7 +445,7 @@ public class GbifUtils implements Serializable {
 				contact.setType(c.getType().name());
 			}
 			
-			
+			contatos.add(contact);
 		}
 		datasetSistema.setContatos(contatos);
 	}

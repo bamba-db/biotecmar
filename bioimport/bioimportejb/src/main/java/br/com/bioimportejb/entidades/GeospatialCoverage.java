@@ -82,6 +82,22 @@ public class GeospatialCoverage implements Serializable {
 		this.globalCoverage = globalCoverage;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public DataSet getDataSet() {
+		return dataSet;
+	}
+
+	public void setDataSet(DataSet dataSet) {
+		this.dataSet = dataSet;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
