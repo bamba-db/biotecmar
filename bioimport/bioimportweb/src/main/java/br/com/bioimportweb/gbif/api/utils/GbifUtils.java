@@ -294,6 +294,10 @@ public class GbifUtils implements Serializable {
 				}
 				
 				DataSet datasetSistema = datasetLocal.buscarPorUuid(uuid);
+				if(datasetSistema == null) {
+					datasetSistema = new DataSet();
+					datasetSistema.setUuid(uuid);
+				}
 				converterDataSet(dataset, data, datasetSistema);
 				datasetLocal.salvar(datasetSistema);
 				processaZip(endPointDwcArquive.getUrl().toURL(), datasetSistema);

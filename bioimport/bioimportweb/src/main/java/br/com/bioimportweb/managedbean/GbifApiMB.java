@@ -16,9 +16,13 @@ public class GbifApiMB implements Serializable {
 
 	private static final long serialVersionUID = -1239947487350258066L;
 	
-	public void testarApi() {
+	public static void main(String... args) {
+		testarApi();
+	}
+	
+	public static void testarApi() {
 		try {
-			GbifUtils.getInstance().processarDataSet("1edcfe6d-da55-4d59-b30e-468cd21f8b0b");
+			GbifUtils.getInstance().processarDataSet("45adf020-a40b-4530-bbc0-0242daa4bd6c");
 		} catch (MalformedURLException e) {
 			Util.montaMensagemFlashRedirect("Erro ao formatar URL do DataSet", null);
 		} catch (ExcecaoIntegracao e) {
