@@ -27,7 +27,7 @@ public class AmostrasRest {
 	@Produces( { MediaType.APPLICATION_XML })
 	 public List<Sample> procurarAmostra() throws ExcecaoIntegracao {
 		List<Sample> lista = new ArrayList<Sample>();
-		lista = amostraBean.listarSamples();
+		lista = amostraBean.listarSamplesOcorrencia();
 		return lista;
 	 }
 

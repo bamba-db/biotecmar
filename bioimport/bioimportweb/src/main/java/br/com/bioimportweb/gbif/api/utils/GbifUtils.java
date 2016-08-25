@@ -19,8 +19,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -276,14 +278,16 @@ public class GbifUtils implements Serializable {
 			
 			Endpoint endPointDwcArquive = null;
 			Calendar data = Calendar.getInstance();
-			data.setTime(dataset.getPubDate());
+			if(dataset.getPubDate() != null) {
+				data.setTime(dataset.getPubDate());
+			}
 			
 			DataSetLocal datasetLocal = (DataSetLocal) 
 					new InitialContext().lookup("java:global/bioimportear/bioimportejb/DataSetBean");
 		
 			
 			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
-			atualizar = true;
+			
 			if(atualizar) {
 				for(Endpoint e : dataset.getEndpoints()) {
 					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
@@ -300,7 +304,9 @@ public class GbifUtils implements Serializable {
 				}
 				converterDataSet(dataset, data, datasetSistema);
 				datasetLocal.salvar(datasetSistema);
-				processaZip(endPointDwcArquive.getUrl().toURL(), datasetSistema);
+				if (endPointDwcArquive != null && endPointDwcArquive.getUrl() != null) {
+					processaZip(endPointDwcArquive.getUrl().toURL(), datasetSistema);
+				}
 			}
 		} catch (NamingException e1) {
 			throw new ExcecaoIntegracao(e1);
@@ -375,7 +381,7 @@ public class GbifUtils implements Serializable {
 		datasetSistema.setDataAlt(data);
 	}
 	private void converterGeospatial(Dataset dataset, DataSet datasetSistema) {
-		ArrayList<GeospatialCoverage> geographicCoverages = new ArrayList<GeospatialCoverage>();
+		Set<GeospatialCoverage> geographicCoverages = new LinkedHashSet<GeospatialCoverage>();
 		for(org.gbif.api.model.registry.eml.geospatial.GeospatialCoverage geoCover : dataset.getGeographicCoverages()) {
 			BoundingBox boundingBox = geoCover.getBoundingBox();
 			if(boundingBox != null) {
@@ -403,7 +409,9 @@ public class GbifUtils implements Serializable {
 			}
 			contact.setAddress(address);
 			contact.setCity(c.getCity());
-			contact.setCountry(c.getCountry().name());
+			if (c.getCountry() != null) {
+				contact.setCountry(c.getCountry().name());
+			}
 			contact.setCreated(c.getCreated());
 			contact.setCreatedBy(c.getCreatedBy());
 			contact.setDataSet(datasetSistema);

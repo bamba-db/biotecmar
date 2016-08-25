@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,7 +27,8 @@ public class DataSet implements Serializable{
 	private static final long serialVersionUID = 9001669138067445925L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name="pk_dataset_sequence",sequenceName="biotecmar.id_dataset_seq", allocationSize=1)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="pk_dataset_sequence")
 	@Column(name="id_dataset")
 	private Long id;	
 	
@@ -113,7 +117,7 @@ public class DataSet implements Serializable{
 	private String additionalInfo;
 
 	@OneToMany(mappedBy="dataSet", cascade=CascadeType.ALL)
-	private List<GeospatialCoverage> geographicCoverages = new ArrayList<GeospatialCoverage>();
+	private Set<GeospatialCoverage> geographicCoverages = new LinkedHashSet<GeospatialCoverage>();
 	
 	@OneToMany(mappedBy="dataSet", cascade=CascadeType.ALL)
 	private List<TemporalCoverage> temporalCoverages = new ArrayList<TemporalCoverage>();
@@ -386,11 +390,11 @@ public class DataSet implements Serializable{
 		this.additionalInfo = additionalInfo;
 	}
 
-	public List<GeospatialCoverage> getGeographicCoverages() {
+	public Set<GeospatialCoverage> getGeographicCoverages() {
 		return geographicCoverages;
 	}
 
-	public void setGeographicCoverages(List<GeospatialCoverage> geographicCoverages) {
+	public void setGeographicCoverages(Set<GeospatialCoverage> geographicCoverages) {
 		this.geographicCoverages = geographicCoverages;
 	}
 

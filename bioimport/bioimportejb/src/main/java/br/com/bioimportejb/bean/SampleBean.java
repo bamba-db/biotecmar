@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.gbif.api.vocabulary.DatasetType;
+
 import br.com.bioimportejb.dao.SampleDAO;
 import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
 import br.com.bioimportejb.entidades.Sample;
@@ -51,14 +53,24 @@ public class SampleBean implements Serializable {
 		}
 	}
 
-	public List<Sample> listarSamples() throws ExcecaoIntegracao {
+	public List<Sample> listarSamplesOcorrencia() throws ExcecaoIntegracao {
 		try {
-			return getSampleDAO().listarAscOuDesc("dt", true);
+			return getSampleDAO().listarSamplesOcorrencia(DatasetType.OCCURRENCE.name());
 		} catch (Exception e) {
 			throw new ExcecaoIntegracao(e);
 		}
 	}
 
+	public List<Sample> listarSamplesEvent() throws ExcecaoIntegracao {
+		try {
+			List<Sample> lista = getSampleDAO().listarSamplesEvent(DatasetType.SAMPLING_EVENT.name());
+			
+			return lista;
+		} catch (Exception e) {
+			throw new ExcecaoIntegracao(e);
+		}
+	}
+	
 	public Sample buscarPorId(Long id) throws ExcecaoIntegracao {
 		try {
 			return getSampleDAO().buscarPorId(id);

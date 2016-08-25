@@ -28,7 +28,7 @@ public class BioticAnalysi implements Serializable {
 
 	//bi-directional one-to-one association to Sample
 	@OneToOne
-	@JoinColumn(name="id")
+	@JoinColumn(name="id_sample", referencedColumnName="id")
 	private Sample sample;
 
 	public BioticAnalysi() {

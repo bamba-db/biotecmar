@@ -18,12 +18,13 @@ import com.google.gson.JsonObject;
 
 import br.com.bioimportejb.bean.SampleBean;
 import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
+import br.com.bioimportejb.entidades.GeospatialCoverage;
 import br.com.bioimportejb.entidades.Sample;
 import br.com.bioimportejb.exception.ExcecaoIntegracao;
 
 @ViewScoped
-@ManagedBean(name="mapaMB")
-public class MapaMB implements Serializable {
+@ManagedBean(name="mapaSampleEventMB")
+public class MapaSampleEventMB implements Serializable {
 
 	/**
 	 * 
@@ -41,6 +42,10 @@ public class MapaMB implements Serializable {
 	
 	private List<FishAssemblyAnalysi> fishes;
 	
+	private Double latInicial;
+
+	private Double longInicial; 
+	
 	public JsonArray getListaJson() {
 		return listaJson;
 	}
@@ -51,33 +56,39 @@ public class MapaMB implements Serializable {
 
 	@PostConstruct
 	private void iniciar() throws ExcecaoIntegracao {
-		setSamples(sampleBean.listarSamplesOcorrencia());
+		setSamples(sampleBean.listarSamplesEvent());
 		listaJson = new JsonArray();
 		for(Sample s : samples) {
-			JsonObject j = new JsonObject();
-			j.addProperty("index", samples.indexOf(s));
-			j.addProperty("latitude", s.getLatitude());
-			j.addProperty("longitude", s.getLongitude());
-			j.addProperty("depth", s.getDepth());
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			j.addProperty("data", sdf.format(s.getDt()));
-			JsonArray array = new JsonArray();
-			for(FishAssemblyAnalysi f: s.getFishAssemblyAnalysi()) {
-				JsonObject fo = new JsonObject();
-				fo.addProperty("family", f.getTaxon().getFamily());
-				fo.addProperty("genus", f.getTaxon().getGenus());
-				fo.addProperty("kingdom", f.getTaxon().getKingdom());
-				fo.addProperty("order", f.getTaxon().getOrder());
-				fo.addProperty("phylum", f.getTaxon().getPhylum());
-				fo.addProperty("scientificname", f.getTaxon().getScientificname());
-				fo.addProperty("species", f.getTaxon().getSpecies());
-				fo.addProperty("taxonrank", f.getTaxon().getTaxonrank());
-				array.add(fo);	
+			for(GeospatialCoverage g : s.getDataSet().getGeographicCoverages()) {
+				JsonObject j = new JsonObject();
+				j.addProperty("index", samples.indexOf(s));
+				setLatInicial(g.getMaxLatitude());
+				setLongInicial(g.getMaxLongitude());
+				j.addProperty("latitude", g.getMaxLatitude());
+				j.addProperty("longitude", g.getMaxLongitude());
+				j.addProperty("depth", "");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				j.addProperty("data", sdf.format(s.getDt()));
+				JsonArray array = new JsonArray();
+				for(FishAssemblyAnalysi f: s.getFishAssemblyAnalysi()) {
+					JsonObject fo = new JsonObject();
+					fo.addProperty("family", f.getTaxon().getFamily());
+					fo.addProperty("genus", f.getTaxon().getGenus());
+					fo.addProperty("kingdom", f.getTaxon().getKingdom());
+					fo.addProperty("order", f.getTaxon().getOrder());
+					fo.addProperty("phylum", f.getTaxon().getPhylum());
+					fo.addProperty("scientificname", f.getTaxon().getScientificname());
+					fo.addProperty("species", f.getTaxon().getSpecies());
+					fo.addProperty("taxonrank", f.getTaxon().getTaxonrank());
+					array.add(fo);	
+				}
+				j.add("fishes", array);
+				
+				listaJson.add(j);
 			}
-			j.add("fishes", array);
-			
-			listaJson.add(j);
 		}
+		
+		log.info(""+listaJson.size());
 	}
 	
 	public void converterJsonParaFish() {
@@ -102,6 +113,22 @@ public class MapaMB implements Serializable {
 
 	public void setFishes(List<FishAssemblyAnalysi> fishes) {
 		this.fishes = fishes;
+	}
+
+	public Double getLatInicial() {
+		return latInicial;
+	}
+
+	public void setLatInicial(Double latInicial) {
+		this.latInicial = latInicial;
+	}
+
+	public Double getLongInicial() {
+		return longInicial;
+	}
+
+	public void setLongInicial(Double longInicial) {
+		this.longInicial = longInicial;
 	}
 	
 }

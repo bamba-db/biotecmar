@@ -32,7 +32,7 @@ public class AmostraRest {
 			Sample a = amostraBean.buscarPorId(id);
 			lista.add(a);
 		} else {
-			lista = amostraBean.listarSamples();
+			lista = amostraBean.listarSamplesOcorrencia();
 		}
 		
 		return lista;

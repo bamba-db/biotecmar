@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
@@ -46,6 +46,37 @@ public class SampleCRUD extends CRUDGenerico<Sample, Long> implements SampleDAO,
 			throw new ExcecaoGenerica(e);
 		}
 		
+	}
+
+	@Override
+	public List<Sample> listarSamplesOcorrencia(String tipoDataSet) throws ExcecaoGenerica {
+		try {
+			StringBuilder hql = new StringBuilder();
+			hql.append("select s from Sample s where s.dataSet.type = :tipoDataSet order by s.dt ");
+			Query query = criarQuery(hql.toString());
+			query.setParameter("tipoDataSet", tipoDataSet);
+			return query.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new ExcecaoGenerica(e);
+		}
+	}
+
+	@Override
+	public List<Sample> listarSamplesEvent(String tipoDataSet) throws ExcecaoGenerica {
+		try {
+			StringBuilder hql = new StringBuilder();
+			hql.append("select distinct s from Sample as s ");
+			hql.append(" inner join fetch s.dataSet as dataSet ");
+			hql.append(" left join fetch dataSet.geographicCoverages as geographicCoverages ");
+			hql.append(" where dataSet.type = :tipoDataSet order by s.dt ");
+			Query query = criarQuery(hql.toString());
+			query.setParameter("tipoDataSet", tipoDataSet);
+			return query.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new ExcecaoGenerica(e);
+		}
 	}
 	
 }

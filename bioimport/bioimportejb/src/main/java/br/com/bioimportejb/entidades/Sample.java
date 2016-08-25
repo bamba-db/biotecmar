@@ -95,7 +95,7 @@ public class Sample implements Serializable {
 	private SampleType sampleType;
 	
 	@ManyToOne
-	@JoinColumn(name="id_dataset")
+	@JoinColumn(name="id_dataset", referencedColumnName="id_dataset")
 	private DataSet dataSet;
 
 	public Sample() {
