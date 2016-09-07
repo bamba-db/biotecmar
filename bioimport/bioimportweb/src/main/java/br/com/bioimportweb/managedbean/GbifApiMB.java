@@ -22,7 +22,7 @@ public class GbifApiMB implements Serializable {
 	
 	public static void testarApi() {
 		try {
-			GbifUtils.getInstance().processarDataSet("1edcfe6d-da55-4d59-b30e-468cd21f8b0b");
+			GbifUtils.getInstance().processarDataSet("740df67d-5663-41a2-9d12-33ec33876c47");
 		} catch (MalformedURLException e) {
 			Util.montaMensagemFlashRedirect("Erro ao formatar URL do DataSet", null);
 		} catch (ExcecaoIntegracao e) {

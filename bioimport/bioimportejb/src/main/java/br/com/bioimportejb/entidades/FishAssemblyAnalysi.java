@@ -3,7 +3,6 @@ package br.com.bioimportejb.entidades;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +15,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.hibernate.annotations.ForeignKey;
 
 
 /**
@@ -46,6 +47,11 @@ public class FishAssemblyAnalysi implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="id_taxon")
 	private Taxon taxon;
+	
+	@ManyToOne
+	@JoinColumn(name="id_evento", referencedColumnName="id_evento")
+	@ForeignKey(name="FK_FISH_EVENTO")
+	private Evento evento;
 
 	public FishAssemblyAnalysi() {
 	}
@@ -80,6 +86,14 @@ public class FishAssemblyAnalysi implements Serializable {
 
 	public void setTaxon(Taxon taxon) {
 		this.taxon = taxon;
+	}
+
+	public Evento getEvento() {
+		return evento;
+	}
+
+	public void setEvento(Evento evento) {
+		this.evento = evento;
 	}
 	
 }

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -48,10 +49,12 @@ import com.opencsv.CSVReader;
 
 import br.com.bioimportejb.bean.SampleBean;
 import br.com.bioimportejb.bean.interfaces.DataSetLocal;
+import br.com.bioimportejb.bean.interfaces.EventoLocal;
 import br.com.bioimportejb.bean.interfaces.TaxonLocal;
 import br.com.bioimportejb.entidades.DataSet;
 import br.com.bioimportejb.entidades.Email;
 import br.com.bioimportejb.entidades.Endereco;
+import br.com.bioimportejb.entidades.Evento;
 import br.com.bioimportejb.entidades.FishAssemblyAnalysi;
 import br.com.bioimportejb.entidades.GeospatialCoverage;
 import br.com.bioimportejb.entidades.PaginaContato;
@@ -66,6 +69,8 @@ import br.com.bioimportejb.util.ChaveTaxonVO;
 import br.com.bioimportweb.util.Util;
 
 public class GbifUtils implements Serializable {
+
+	private static final String FILE_EVENT = "event.txt";
 
 	private static final String FILE_OCCURRENCE = "occurrence.txt";
 
@@ -88,7 +93,7 @@ public class GbifUtils implements Serializable {
 	
 	private TaxonLocal taxonLocal;
 	
-	public Collection<Sample> montarSamples(Archive arq, DataSet dataset) throws ExcecaoIntegracao {
+	public Collection<Sample> montarSamples(Archive arq, DataSet dataset, Map<String, Evento> eventos) throws ExcecaoIntegracao {
 		CSVReader reader = null;
 		Map<ChaveSampleVO, Sample> samples = new HashMap<ChaveSampleVO, Sample>();
 		try {
@@ -148,6 +153,15 @@ public class GbifUtils implements Serializable {
 						sample = aux;
 					}
 					FishAssemblyAnalysi f = new FishAssemblyAnalysi();
+					
+					if(eventos != null) {
+						if(arq.getCore().hasTerm(DwcTerm.eventID)) {
+							String eventId = r.value(DwcTerm.eventID);
+							if(eventId != null) {
+								f.setEvento(eventos.get(eventId));
+							}
+						}
+					}
 			    	
 			    	/**
 			    	 * Sistema recupera o taxonkey da linha corrente
@@ -287,7 +301,7 @@ public class GbifUtils implements Serializable {
 		
 			
 			boolean atualizar = datasetLocal.verificarAtualizacao(uuid, data);
-			
+			atualizar = true;
 			if(atualizar) {
 				for(Endpoint e : dataset.getEndpoints()) {
 					if(EndpointType.DWC_ARCHIVE.equals(e.getType())) {
@@ -487,12 +501,21 @@ public class GbifUtils implements Serializable {
 	        
 	        unZipIt(nomeZip, nomeArquivo, diretorioTmp);
 	        
+	        Map<String, Evento> eventos = null;
+	        File fileEventos = new File(nomeArquivo + File.separator + FILE_EVENT);
+	        if(fileEventos.exists()) {
+		        Archive arqEventos = ArchiveFactory.openArchive(fileEventos);
+		        eventos = montarEventos(arqEventos);
+		        
+	        }
+	        
 	        File fileOcorrencias = new File(nomeArquivo + File.separator + FILE_OCCURRENCE);
 	        
 	        Archive arq = ArchiveFactory.openArchive(fileOcorrencias);
 	        
+	       
 	        
-			Collection<Sample> samples = montarSamples(arq, dataset);
+			Collection<Sample> samples = montarSamples(arq, dataset, eventos);
 			gravarSamples(samples);
 			
 			new File(nomeDiretorio).delete();
@@ -503,6 +526,100 @@ public class GbifUtils implements Serializable {
 		}
 	}
 	
+	private Map<String, Evento> montarEventos(Archive arq) throws ExcecaoIntegracao {
+		CSVReader reader = null;
+		Map<String, Evento> eventos = new HashMap<String, Evento>();
+		try {
+			EventoLocal eventoLocal = (EventoLocal) 
+					new InitialContext().lookup("java:global/bioimportear/bioimportejb/EventoBean");
+			 Iterator<Record> iterator = arq.getCore().iterator();
+			 while (iterator.hasNext()) {
+				 	Record r = iterator.next();
+					Evento evento = null;
+					String eventId = r.value(DwcTerm.eventID);
+					evento = eventoLocal.buscarPorEventId(eventId);
+					if(evento == null) {
+						evento = new Evento();
+					}
+						
+					evento.setEventID(eventId);
+					
+					if(arq.getCore().hasTerm(DwcTerm.samplingProtocol)) { 
+						evento.setSamplingProtocol(r.value(DwcTerm.samplingProtocol));
+					}
+					
+					if(arq.getCore().hasTerm("sampleSizeValue")) { 
+						evento.setSampleSizeValue(r.value("sampleSizeValue"));
+					}
+					
+					if(arq.getCore().hasTerm("sampleSizeUnit")) { 
+						evento.setSampleSizeUnit(r.value("sampleSizeUnit"));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.eventDate)) {
+						String eDateS = r.value(DwcTerm.eventDate);
+						if (eDateS != null) {
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+							Date data = format.parse(eDateS);
+							Calendar eventDate = Calendar.getInstance();
+							eventDate.setTime(data);
+							evento.setEventDate(eventDate);
+						}
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.habitat)) { 
+						evento.setHabitat(r.value(DwcTerm.habitat));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.countryCode)) { 
+						evento.setCountryCode(r.value(DwcTerm.countryCode));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.decimalLatitude)) { 
+						evento.setDecimalLatitude(new BigDecimal(r.value(DwcTerm.decimalLatitude)));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.decimalLongitude)) { 
+						evento.setDecimalLongitude(new BigDecimal(r.value(DwcTerm.decimalLongitude)));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.geodeticDatum)) { 
+						evento.setGeodeticDatum(r.value(DwcTerm.geodeticDatum));
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.coordinateUncertaintyInMeters)) {
+								
+						String value = r.value(DwcTerm.coordinateUncertaintyInMeters);
+						if(value != null) {
+							evento.setCoordinateUncertaintyInMeters(Integer.parseInt(value));
+						}
+						
+					}
+					
+					if(arq.getCore().hasTerm(DwcTerm.footprintWKT)) { 
+						evento.setFootprintWKT(r.value(DwcTerm.footprintWKT));
+					}
+	
+					evento = eventoLocal.salvarEvento(evento);
+			    	eventos.put(eventId, evento);
+			 }
+		} catch (NamingException e1) {
+			log.error(e1.getMessage(), e1);
+			throw new ExcecaoIntegracao(e1);
+		} catch (ParseException e) {
+			log.error(e.getMessage(), e);
+			throw new ExcecaoIntegracao(e);
+		} finally {
+			if(reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new ExcecaoIntegracao(e);
+				}
+			}
+		}
+		return eventos;  
+	}
 	public void gravarSamples(Collection<Sample> samples) throws ExcecaoIntegracao {
     	try {
     		SampleBean sampleBean = (SampleBean) 

@@ -13,6 +13,7 @@
 		<class>br.com.bioimportejb.entidades.DataSet</class>
 		<class>br.com.bioimportejb.entidades.Email</class>
 		<class>br.com.bioimportejb.entidades.Endereco</class>
+		<class>br.com.bioimportejb.entidades.Evento</class>
 		<class>br.com.bioimportejb.entidades.FishAssemblyAnalysi</class>
 		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysi</class>
 		<class>br.com.bioimportejb.entidades.MetagenomeFunctionalAnalysiPK</class>
@@ -33,6 +34,7 @@
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
 			
 			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false" />
+			
 <!-- 			<property name="hibernate.hbm2ddl.auto" value="update"/> -->
 <!-- 			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/> -->
 <!-- 			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/biotecmar"/> -->
